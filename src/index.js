@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import App from './App';
 
-const App = () => (
-    <div>
-        <h1>Welcome to the Feed!</h1>
-    </div>
+ReactDOM.render(
+    <React.StrictMode>
+        <App />
+    </React.StrictMode>,
+    document.getElementById('root')
 );
-
-ReactDOM.render(<App />, document.getElementById('root'));

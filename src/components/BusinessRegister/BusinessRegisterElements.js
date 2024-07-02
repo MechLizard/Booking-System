@@ -32,7 +32,7 @@ export const Icon = styled(Link)`
     margin-top: 32px;
     text-decoration: none;
     color: black;
-    font-weight: 800;
+    font-weight: 800;  
     font-size: 48px;
 
     @media screen and (max-width: 480px) {
@@ -55,19 +55,19 @@ export const FormContent = styled.div`
 
 // Form container with styles
 export const Form = styled.form`
-    background: #010101;
-    max-width: 400px;
+    background: darkslategray;
+    max-width: 600px;  
     height: auto;
     width: 100%;
     z-index: 1;
     display: grid;
     margin: 0 auto;
-    padding: 80px 32px;
+    padding: 40px 32px;
     border-radius: 4px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 
     @media screen and (max-width: 400px) {
-        padding: 32px 32px;
+        padding: 32px 16px;
     }
 `
 
@@ -90,20 +90,29 @@ export const FormLabel = styled.label`
 // Input fields for the form
 export const FormInput = styled.input`
     padding: 16px 16px;
-    margin-bottom: 32px;
+    margin-bottom: 24px;  
     border: none;
     border-radius: 4px;
 `
 
 // Submit button for the form
 export const FormButton = styled.button`
-    background: cadetblue;
+    background: black;
     padding: 16px 0;
     border: none;
     border-radius: 4px;
     color: #fff;
     font-size: 20px;
     cursor: pointer;
+`
+
+// Text component for additional options or links
+export const Text = styled.span`
+    text-align: center;
+    margin-top: 24px;
+    color: #fff;
+    font-size: 14px;
+    display: block;  
 `
 
 // Link for additional options
@@ -115,6 +124,6 @@ export const TextLink = styled(Link)`
     text-decoration: none;
 
     &:hover {
-        color: darkslategray;  // Change color on hover 
+        color: cadetblue;  // Change color on hover 
     }
 `
