@@ -10,3 +10,10 @@ Developers:
 - Carmen Staden
 - Cody Caraballo
 - Izzy Jones
+
+MERN Stack Prerequisites:
+Node.js
+MongoDB
+
+Dependencies for Backend:
+npm install express mongoose bcryptjs jsonwebtoken body-parser cors
