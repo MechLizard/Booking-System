@@ -11,10 +11,7 @@ app.use(express.json()); // for any request to express server,
                         // checks if request already carries important data
 
 // *=== Connect to MongoDB ===* //
-mongoose.connect('mongodb://localhost/MERN', { 
-  useNewUrlParser: true, 
-  useUnifiedTopology: true 
-})
+mongoose.connect('mongodb://localhost/MERN')
   .then(() => {
     console.log('Connected to MongoDB')
 
