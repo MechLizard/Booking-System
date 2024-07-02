@@ -1,0 +1,6 @@
+# ninja log v6
+10	445	7415676473034362	CMakeFiles/The_Feed.dir/src/main.cpp.obj	86d21967bb04907e
+445	520	7415676477385762	The_Feed.exe	9a4ffdb3a01aff2f
+43	522	7416475090020291	CMakeFiles/The_Feed.dir/src/Account.cpp.obj	1f884f7ebc4dcb1c
+15	331	7416477021423136	CMakeFiles/The_Feed.dir/src/main.cpp.obj	86d21967bb04907e
+332	530	7416477024577581	The_Feed.exe	1df41889158bc57f

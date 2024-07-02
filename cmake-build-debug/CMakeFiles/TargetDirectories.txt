@@ -1,0 +1,3 @@
+C:/Users/Cody/Programming/testFork/The-Feed/cmake-build-debug/CMakeFiles/The_Feed.dir
+C:/Users/Cody/Programming/testFork/The-Feed/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/Cody/Programming/testFork/The-Feed/cmake-build-debug/CMakeFiles/rebuild_cache.dir
