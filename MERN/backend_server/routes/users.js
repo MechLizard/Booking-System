@@ -7,10 +7,10 @@ const router = express.Router();
 
 // POST: Register => MongoDB
 router.post('/register', async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, phone, zipcode, email, password } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const newUser = new User({ name, email, password: hashedPassword, role });
+  const newUser = new User({ name, phone, zipcode, email, password: hashedPassword});
   await newUser.save();
   res.status(201).send('User registered');
 });
