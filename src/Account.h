@@ -14,6 +14,7 @@ enum Permissions{
 struct Booking{
     unsigned int price;
     std::string time;
+    unsigned int rating;
 };
 
 
@@ -23,6 +24,8 @@ struct Account{
     Permissions permission;
     std::string phoneNumber;
     std::string nameOfBusiness;
+    std::string fullName;
+    std::string address;
 
     std::vector<std::pair<Booking,std::string>> bookings;
     void generateAccounts(std::vector<Account>& vector, unsigned int numberOfAccounts);

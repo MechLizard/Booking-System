@@ -21,6 +21,8 @@ void Account::generateAccounts(std::vector<Account>& vector, unsigned int number
 
             account.email.push_back(alph[rand() % 26]);
             account.password.push_back(alph[rand() % 26]);
+            account.fullName.push_back(alph[rand() % 26]);
+            account.address.push_back(alph[rand()%26]);
             if(account.permission == BUSINESS){
                 account.nameOfBusiness.push_back(alph[rand() % 26]);
                 Booking booking = {};

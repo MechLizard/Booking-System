@@ -9,7 +9,7 @@ int main(){
     srand(time(nullptr));
     std::cout<<"Hello World"<<std::endl;
     std::vector<Account> vec;
-	Account account;
+	Account account = {};
     account.generateAccounts(vec,155);
 
     account.printAccounts(vec);
