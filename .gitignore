@@ -1,2 +1,6 @@
 *.exe
 *.out
+node_modules/
+cmake-build-debug/
+.env
+.idea
