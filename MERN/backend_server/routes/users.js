@@ -7,10 +7,10 @@ const router = express.Router();
 
 // POST: Register => MongoDB
 router.post('/register', async (req, res) => {
-  const { name, phone, zipcode, email, password } = req.body;
+  const { name, phone, zipcode, email, password, permissions } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const newUser = new User({ name, phone, zipcode, email, password: hashedPassword});
+  const newUser = new User({ name, phone, zipcode, email, password: hashedPassword, permissions});
   await newUser.save();
   res.status(201).send('User registered');
 });
@@ -28,9 +28,12 @@ router.post('/login', async (req, res) => {
   res.status(200).json({ token });
 });
 
-// GET requests for retrieving particular customer's info for business profile??
+// GET: MongoDB => Website
 router.get('/:id', (res, req) => {
   res.json({mssg: 'GET a customer\'s info'})
 })
+
+// PUT: modifies user 
+
 
 module.exports = router;
