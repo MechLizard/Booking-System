@@ -6,6 +6,7 @@ import CustomerRegister from './components/CustomerRegister/CustomerRegister';
 import BusinessRegister from './components/BusinessRegister/BusinessRegister';
 import BusinessDashboard from './components/BusinessDashboard/BusinessDashboard';
 import CustomerDashboard from './components/CustomerDashboard/CustomerDashboard';
+import Testing from './components/TESTING/testroute';
 
 function App() {
     return (
@@ -16,6 +17,7 @@ function App() {
                 <Route path="/register/business" element={<BusinessRegister />} />
                 <Route path="/business-dashboard" element={<BusinessDashboard />} />
                 <Route path="/customer-dashboard" element={<CustomerDashboard />} />
+                <Route path="/testing" element={<Testing />} />
             </Routes>
         </Router>
     );

@@ -5,7 +5,7 @@ const UserSchema = new mongoose.Schema({
   phone: String,
   email: { type: String, unique: true },
   password: String,
-  permissions: Enumerator,
+  permissions: { type: String, enum: ['customer', 'business', 'admin']},
   createdAt: { type: Date, default: Date.now }
 });
 
