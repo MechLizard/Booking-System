@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Form, FormButton, FormContent, FormH1, FormInput, FormLabel, FormWrap, Icon, Text, TextLink } from './BusinessRegisterElements';
+import { Container, Form, FormButton, FormContent, FormH1, FormInput, FormLabel, FormWrap, Icon, Text, TextLink, FormSelect } from './BusinessRegisterElements';
 import axios from 'axios';
 
 const BusinessRegister = () => {
@@ -11,6 +11,7 @@ const BusinessRegister = () => {
         password: '',
         confirmPassword: '',
         permissions: 'business',
+        businessType: '',
     });
 
     const handleChange = (e) => {
@@ -56,6 +57,15 @@ const BusinessRegister = () => {
                         <FormInput type='password' id='password' required value={formData.password} onChange={handleChange} />
                         <FormLabel htmlFor='confirm-password'>Confirm Password</FormLabel>
                         <FormInput type='password' id='confirmPassword' required value={formData.confirmPassword} onChange={handleChange} />
+
+                        {/* Business Type Dropdown */}
+                        <FormLabel htmlFor='businessType'>Business Type</FormLabel>
+                        <FormSelect id='businessType' required value={formData.businessType} onChange={handleChange}>
+                            <option value="">Select a business type</option>
+                            <option value="retail">Retail</option>
+                            <option value="service">Service</option>
+                            <option value="restaurant">Restaurant</option>
+                        </FormSelect>
 
                         <FormButton type='submit'>Register</FormButton>
                         <Text>Already have an account? <TextLink to="/">Sign In</TextLink></Text>
