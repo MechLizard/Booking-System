@@ -1,11 +1,20 @@
 const mongoose = require('mongoose');
+const user = require('User');
 
 const BookingSchema = new mongoose.Schema({
   serviceId: mongoose.Schema.Types.ObjectId, // ObjectId represents specific instances (documents) 
-  customerId: mongoose.Schema.Types.ObjectId, // of a model (constructor from Schema definitions)
+  customerId: mongoose.Schema.Types.ObjectId,
+  businessId: mongoose.Schema.Types.ObjectId,// of a model (constructor from Schema definitions)
   date: Date,
   availability: Array,
-  price: Number, 
+  price: Number,
+  customerName: String,
+  customerEmail: String,
+  businessEmail: String,
+  businessName: String,
+  customerPhone: String,
+  businessPhone: String,
+
   createdAt: { type: Date, default: Date.now }
 });
 // need availability and price
