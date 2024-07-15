@@ -10,6 +10,7 @@ const BusinessRegister = () => {
         email: '',
         password: '',
         confirmPassword: '',
+        permissions: 'business',
     });
 
     const handleChange = (e) => {
@@ -25,6 +26,7 @@ const BusinessRegister = () => {
         try {
             const response = await axios.post('http://localhost:5000/users/register', formData);
             console.log(response.data);
+            window.location.href = '/';
         } catch (error) {
             console.error('There was an error submitting the form!', error);
         }
@@ -55,7 +57,6 @@ const BusinessRegister = () => {
                         <FormLabel htmlFor='confirm-password'>Confirm Password</FormLabel>
                         <FormInput type='password' id='confirmPassword' required value={formData.confirmPassword} onChange={handleChange} />
 
-
                         <FormButton type='submit'>Register</FormButton>
                         <Text>Already have an account? <TextLink to="/">Sign In</TextLink></Text>
                     </Form>
@@ -66,4 +67,3 @@ const BusinessRegister = () => {
 };
 
 export default BusinessRegister;
-
