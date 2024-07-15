@@ -49,20 +49,4 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// // PUT: modifies user
-// router.put('/:id', async (req, res) => {
-//   const { name, phone, zipcode, email, password, permissions } = req.body;
-//   try {
-//     const updates = { name, phone, zipcode, email, permissions };
-//     if (password) {
-//       updates.password = await bcrypt.hash(password, 10);
-//     }
-//     const user = await User.findByIdAndUpdate(req.params.id, updates, { new: true });
-//     if (!user) return res.status(404).send('User not found');
-//     res.json(user);
-//   } catch (error) {
-//     res.status(500).send('Error updating user information');
-//   }
-// });
-
 module.exports = router;
