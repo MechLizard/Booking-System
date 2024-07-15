@@ -13,4 +13,5 @@ add_executable(The_Feed
         .gitignore
         build.bat
         build.sh
-        README.md)
+        README.md
+        src/Account.cpp)
