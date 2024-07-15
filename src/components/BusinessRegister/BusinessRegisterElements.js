@@ -32,7 +32,7 @@ export const Icon = styled(Link)`
     margin-top: 32px;
     text-decoration: none;
     color: black;
-    font-weight: 800;  
+    font-weight: 800;
     font-size: 48px;
 
     @media screen and (max-width: 480px) {
@@ -56,7 +56,7 @@ export const FormContent = styled.div`
 // Form container with styles
 export const Form = styled.form`
     background: darkslategray;
-    max-width: 600px;  
+    max-width: 600px;
     height: auto;
     width: 100%;
     z-index: 1;
@@ -90,6 +90,14 @@ export const FormLabel = styled.label`
 // Input fields for the form
 export const FormInput = styled.input`
     padding: 16px 16px;
+    margin-bottom: 24px;
+    border: none;
+    border-radius: 4px;
+`
+
+// Dropdown for business type
+export const FormSelect = styled.select`
+    padding: 16px 16px;
     margin-bottom: 24px;  
     border: none;
     border-radius: 4px;
@@ -112,7 +120,7 @@ export const Text = styled.span`
     margin-top: 24px;
     color: #fff;
     font-size: 14px;
-    display: block;  
+    display: block;
 `
 
 // Link for additional options
