@@ -25,3 +25,5 @@ To Test Database:
 1. Start MongoDB compass and connect
 2. From Root directory, run "node MERN/backend_server/server.js" to start local server
 3. From a separate terminal in the root directory run "npm start"
+
+Test(Adalys)
