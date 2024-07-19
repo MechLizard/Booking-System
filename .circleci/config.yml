@@ -23,12 +23,16 @@ jobs:
       #      sudo apt-get install -y nodejs
       - run:
           name: Compile Code
-          command: 'g++ -Werror src/*.cpp -o /home/circleci/project/the_feed.exe'
+          # Compile just the regular program and the program with Catch2
+          command: |
+            cd /home/circleci/project
+            g++ -Werror src/*.cpp -o /home/circleci/project/the_feed.exe
+            g++ -Werror test/*.cpp test/catch/*.cpp -o /home/circleci/project/the_feed_test.exe
       # Allows "build" environment to persist into the "test" phase
       - persist_to_workspace:
           root: /home/circleci/project
           paths:
-            - the_feed.exe
+            - the_feed_test.exe
   test:
     executor: docker_executor
     steps:
@@ -36,7 +40,8 @@ jobs:
           at: /home/circleci/project/
       - run:
           name: Run Code
-          command: '/home/circleci/project/the_feed.exe'
+          command: '/home/circleci/project/the_feed_test.exe'
+
 
 # Orchestrate our job run sequence
 workflows:
