@@ -27,9 +27,9 @@ mongoose.connect('mongodb://localhost/MERN')
 
 // routes and middleware
 const users = require('./routes/users');
-const services = require('./routes/services');
+const businesses = require('./routes/businesses');
 const bookings = require('./routes/bookings');
 
 app.use('/users', users) // only fires "users" routes when comes to /users path
-app.use('/services', services)
+app.use('/businesses', businesses)
 app.use('/bookings', bookings)
