@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    build:
+      context: ./MERN/backend_server/Database
+      dockerfile: Dockerfile
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  web:
+    #build: .circleci
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: node-web-app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongodb
+    links:
+      - mongodb
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017/MERN
+#    volumes:
+#      - C:\Users\MechLizard\CLionProjects\The-Feed:/home/circleci/project
+
+volumes:
+  mongo-data:

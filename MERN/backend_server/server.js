@@ -11,7 +11,7 @@ app.use(express.json()); // for any request to express server,
                         // checks if request already carries important data
 
 // *=== Connect to MongoDB ===* //
-mongoose.connect('mongodb://localhost/MERN')
+mongoose.connect('mongodb://localhost:27017/MERN')
   .then(() => {
     console.log('Connected to MongoDB')
 
