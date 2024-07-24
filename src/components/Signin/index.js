@@ -72,6 +72,7 @@ const SignIn = () => {
                         <TextLink to="/business-dashboard">BUSINESS POV</TextLink>
                         <TextLink to="/customer-dashboard">CUSTOMER POV</TextLink>
                         <TextLink to="/testing">TESTING</TextLink>
+                        <TextLink to="/view-business">View Business</TextLink>
                     </Form>
                 </FormContent>
             </FormWrap>

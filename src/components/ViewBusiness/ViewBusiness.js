@@ -1,9 +1,9 @@
-// BusinessPOV of Business dashboard SET AVAILABILITY HERE ADALYS
+// Customer POV of Business Dashboard (currently setup for Customer)
 
 import React, { useState } from 'react';
-import { Container, FormWrap, Icon, DashboardContent, Section, Title, Text, Calendar, Reviews, ProfitCounter, CalendarHeader, CalendarBody, DayNames, DayBox, DayName, CalendarGrid, ReviewItem, ReviewText, ReviewAuthor, TimeSlotsModal, TimeSlotItem, CloseButton, ServicesSelect, ServiceOption, ThankYouNote } from './BusinessDashboardElements';
+import { Container, FormWrap, Icon, DashboardContent, Section, Title, Text, Calendar, Reviews, ProfitCounter, CalendarHeader, CalendarBody, DayNames, DayBox, DayName, CalendarGrid, ReviewItem, ReviewText, ReviewAuthor, TimeSlotsModal, TimeSlotItem, CloseButton, ServicesSelect, ServiceOption, ThankYouNote } from './ViewBusinessElements';
 
-const BusinessDashboard = () => {
+const ViewBusiness = () => {
     const [selectedDay, setSelectedDay] = useState(null);
     const [selectedService, setSelectedService] = useState("");
     const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
@@ -12,7 +12,7 @@ const BusinessDashboard = () => {
     // Generated array for days in the month
     const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1);
 
-    // goal: update timeSlots with actual 
+    // goal: update timeSlots with actual
 
     const timeSlots = [
         "9:00-10:00 AM",
@@ -60,21 +60,21 @@ const BusinessDashboard = () => {
 
         const handleSubmit = async (e) => {
             e.preventDefault();
-        
+
             const newAvailability = {
-              day: parseInt(day, 10),
-              times: [{ times }],
+                day: parseInt(day, 10),
+                times: [{ times }],
             };
-        
+
             try {
                 const response = await axios.patch(`http://localhost:5000/businesses/${businessID}/availability`, {
-                  availability: newAvailability,
+                    availability: newAvailability,
                 });
                 setBusiness(response.data);
-              } catch (err) {
+            } catch (err) {
                 setError(err.message);
-              }
-            };
+            }
+        };
     };
 
     return (
@@ -103,7 +103,7 @@ const BusinessDashboard = () => {
                                 <CalendarGrid>
                                     {daysInMonth.map(day => (
                                         <DayBox key={day} onClick={() => handleDayClick(day)}>{day}</DayBox>
-                                        
+
                                     ))}
                                 </CalendarGrid>
                             </CalendarBody>
@@ -152,4 +152,4 @@ const BusinessDashboard = () => {
     );
 };
 
-export default BusinessDashboard;
+export default ViewBusiness;
