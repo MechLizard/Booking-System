@@ -1,3 +1,5 @@
+// BusinessPOV (currently setup for Customer)
+
 import React, { useState } from 'react';
 import { Container, FormWrap, Icon, DashboardContent, Section, Title, Text, Calendar, Reviews, ProfitCounter, CalendarHeader, CalendarBody, DayNames, DayBox, DayName, CalendarGrid, ReviewItem, ReviewText, ReviewAuthor, TimeSlotsModal, TimeSlotItem, CloseButton, ServicesSelect, ServiceOption, ThankYouNote } from './BusinessDashboardElements';
 
@@ -9,6 +11,8 @@ const BusinessDashboard = () => {
 
     // Generated array for days in the month
     const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1);
+
+    // goal: update timeSlots with actual 
 
     const timeSlots = [
         "9:00-10:00 AM",
@@ -48,6 +52,31 @@ const BusinessDashboard = () => {
         setShowThankYou(false);
     };
 
+    const BusinessUpdateAvailability = (businessID) => {
+        const [day, setDay] = useState('');
+        const [times, setTimes] = useState('');
+        const [business, setBusiness] = useState(null);
+        const [error, setError] = useState(null);
+
+        const handleSubmit = async (e) => {
+            e.preventDefault();
+        
+            const newAvailability = {
+              day: parseInt(day, 10),
+              times: [{ times }],
+            };
+        
+            try {
+                const response = await axios.patch(`http://localhost:5000/businesses/${businessID}/availability`, {
+                  availability: newAvailability,
+                });
+                setBusiness(response.data);
+              } catch (err) {
+                setError(err.message);
+              }
+            };
+    };
+
     return (
         <Container>
             <Icon to="/">THE FEED</Icon>
@@ -74,6 +103,7 @@ const BusinessDashboard = () => {
                                 <CalendarGrid>
                                     {daysInMonth.map(day => (
                                         <DayBox key={day} onClick={() => handleDayClick(day)}>{day}</DayBox>
+                                        
                                     ))}
                                 </CalendarGrid>
                             </CalendarBody>
