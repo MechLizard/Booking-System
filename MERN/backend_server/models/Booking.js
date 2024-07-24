@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const user = require('User');
+//const user = require('User');
 
 const BookingSchema = new mongoose.Schema({
   serviceId: mongoose.Schema.Types.ObjectId, // ObjectId represents specific instances (documents) 
@@ -215,19 +215,19 @@ const dbName = 'MERN';
 
 async function run() {
   try {
-    // Connect the client to the server
-    await client.connect();
-    console.log("Connected successfully to server");
-
-    const db = client.db(dbName);
-
-    // Use the collection "mycollection"
-    const collection = db.collection('users');
-    let account = new Account("Jaimeszq@gmail.com", "lol", Permissions.CUSTOMER, 5547854, "", "Jaimes", "Mitchell", "wwsjklsjdflj", "");
-
-    // Insert a single document
-    const insertResult = await collection.insertOne({ name: account.fullName, age: 25, email:account.email, Permission: Permissions.ADMIN, password: account.password});
-    console.log('Inserted document:', insertResult);
+    // // Connect the client to the server
+    // await client.connect();
+    // console.log("Connected successfully to server");
+    //
+    // const db = client.db(dbName);
+    //
+    // // Use the collection "mycollection"
+    // const collection = db.collection('users');
+    // let account = new Account("Jaimeszq@gmail.com", "lol", Permissions.CUSTOMER, 5547854, "", "Jaimes", "Mitchell", "wwsjklsjdflj", "");
+    //
+    // // Insert a single document
+    // const insertResult = await collection.insertOne({ name: account.fullName, age: 25, email:account.email, Permission: Permissions.ADMIN, password: account.password});
+    // console.log('Inserted document:', insertResult);
 
   } finally {
     // Ensures that the client will close when you finish/error
