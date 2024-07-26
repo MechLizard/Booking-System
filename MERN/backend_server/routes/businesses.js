@@ -5,6 +5,31 @@ const Business = require('../models/Business');
 
 const router = express.Router();
 
+// GET particular business
+router.get('/:id', async (req, res) => {
+    try {
+        const business = await Business.findById(req.params.id);
+        if (!business) {
+          return res.status(404).send('Business not found');
+        }
+        res.json(business);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: error.message });
+      }
+});
+
+// GET all businesses in MongoDB
+router.get('/', async (req, res) => {
+    try {
+        const businesses = await Business.find();
+        res.json(businesses);
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+})
+
+
 // POST: Register => MongoDB
 router.post('/register', async (req, res) => {
     const { name, serviceType, phone, zipcode, email, password, permissions } = req.body;
@@ -46,7 +71,7 @@ router.patch('/:id/availability', async (req, res) => {
         const business = await Business.findByIdAndUpdate(id, { $push: { availability: availability } }, { new: true });
         res.status(200).json(business);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(500).json({ msg: err.message });
     }
 });
 
@@ -58,7 +83,7 @@ router.patch('/:id/availability/remove', async (req, res) => {
         const business = await Business.findByIdAndUpdate(id, { $pull: { availability: { _id: availabilityID } } }, { new: true });
         res.status(200).json(business);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(500).json({ msg: err.message });
     }
 });
 
@@ -71,7 +96,7 @@ router.patch('/:id/reviews', async (req, res) => {
         const business = await Business.findByIdAndUpdate(id, { $push: { reviews: review } }, { new: true });
         res.status(200).json(business);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(500).json({ msg: err.message });
     }
 });
 
@@ -83,7 +108,7 @@ router.patch('/:id/reviews/remove', async (req, res) => {
         const business = await Business.findByIdAndUpdate(id, { $pull: { reviews: { _id: reviewID } } }, { new: true });
         res.status(200).json(business);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(500).json({ msg: err.message });
     }
 });
 
@@ -96,7 +121,7 @@ router.patch('/:id/booking', async (req, res) => {
         const business = await Business.findByIdAndUpdate(id, { $push: { booking: booking } }, { new: true });
         res.status(200).json(business);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(500).json({ msg: err.message });
     }
 });
 
@@ -108,7 +133,7 @@ router.patch('/:id/booking/remove', async (req, res) => {
         const business = await Business.findByIdAndUpdate(id, { booking: { _id: bookingID } }, { new: true });
         res.status(200).json(business);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(500).json({ msg: err.message });
     }
 });
 
@@ -121,7 +146,7 @@ router.patch('/:id/price', async (req, res) => {
         const business = await Business.findByIdAndUpdate(id, { price: price }, { new: true });
         res.status(200).json(business);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(500).json({ msg: err.message });
     }
 });
 
