@@ -20,6 +20,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // GET all businesses in MongoDB
+// http::localhost:8000/businesses/
 router.get('/', async (req, res) => {
     try {
         const businesses = await Business.find();
