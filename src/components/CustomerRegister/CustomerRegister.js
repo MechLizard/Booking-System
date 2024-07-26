@@ -24,7 +24,7 @@ const CustomerRegister = () => {
         e.preventDefault();
 
         try {
-            const response = await axios.post('http://localhost:5000/users/register', formData);
+            const response = await axios.post('http://localhost:8000/users/register', formData);
             console.log(response.data);
             window.location.href = '/';
         } catch (error) {

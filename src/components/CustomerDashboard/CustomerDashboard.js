@@ -8,8 +8,8 @@ const CustomerDashboard = () => {
         setSelectedService(e.target.value);
     };
 
-    // Add retrieve calls from mongo here i think (MUST UPDATE )
-    // .get('businesses/${businessID}') for specific business
+    // Add retrieve calls from mongo here i think
+    // .get('/businesses/${businessID}') for specific business
     // .get('/businesses') for list of all businesses
 
     // fill data for tiles here

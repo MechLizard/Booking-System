@@ -67,7 +67,7 @@ const BusinessDashboard = () => {
             };
         
             try {
-                const response = await axios.patch(`http://localhost:5000/businesses/${businessID}/availability`, {
+                const response = await axios.patch(`http://localhost:8000/businesses/${businessID}/availability`, {
                   availability: newAvailability,
                 });
                 setBusiness(response.data);
