@@ -1,13 +1,16 @@
 // BusinessPOV of Business dashboard SET AVAILABILITY HERE ADALYS
 
 import React, { useState } from 'react';
-import { Container, FormWrap, Icon, DashboardContent, Section, Title, Text, Calendar, Reviews, ProfitCounter, CalendarHeader, CalendarBody, DayNames, DayBox, DayName, CalendarGrid, ReviewItem, ReviewText, ReviewAuthor, TimeSlotsModal, TimeSlotItem, CloseButton, ServicesSelect, ServiceOption, ThankYouNote } from './BusinessDashboardElements';
+import { Container, FormWrap, Icon, DashboardContent, Section, Title, Text, Calendar, Reviews, ProfitCounter, CalendarHeader, CalendarBody, DayNames, DayBox, DayName, CalendarGrid, ReviewItem, ReviewText, ReviewAuthor, TimeSlotsModal, TimeSlotItem, CloseButton, ServicesSelect, ServiceOption, ThankYouNote, AvailabilityForm, SubmitButton } from './BusinessDashboardElements';
 
 const BusinessDashboard = () => {
     const [selectedDay, setSelectedDay] = useState(null);
     const [selectedService, setSelectedService] = useState("");
     const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
     const [showThankYou, setShowThankYou] = useState(false);
+
+    const [ business, setBusiness ] = useState(null); // will become business "object"
+    const [ error, setError ] = useState(null);
 
     // Generated array for days in the month
     const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1);
@@ -25,56 +28,36 @@ const BusinessDashboard = () => {
         "4:00-5:00 PM"
     ];
 
-    const services = [
-        "Toilet Unclogging",
-        "Sink Repair",
-        "The Joe Special"
-    ];
-
     const handleDayClick = (day) => {
         setSelectedDay(day);
         setShowThankYou(false);
     };
 
-    const handleServiceChange = (e) => {
-        setSelectedService(e.target.value);
-    };
-
     const handleTimeSlotClick = (slot) => {
-        setSelectedTimeSlot(slot);
-        setShowThankYou(true);
+        setSelectedTimeSlot(prevSlots => {
+            if (prevSlots.includes(slot)) {
+                return prevSlots.filter(s => s !== slot);
+            } else {
+                return [...prevSlots, slot];
+            }
+        });
     };
 
-    const closeTimeSlotsModal = () => {
-        setSelectedDay(null);
-        setSelectedService("");
-        setSelectedTimeSlot("");
-        setShowThankYou(false);
-    };
+    const handleAvailabilitySet = async (e) => {
 
-    const BusinessUpdateAvailability = (businessID) => {
-        const [day, setDay] = useState('');
-        const [times, setTimes] = useState('');
-        const [business, setBusiness] = useState(null);
-        const [error, setError] = useState(null);
+        const newAvailability = {
+            day: selectedDay,
+            times: selectedTimeSlot
+        };
 
-        const handleSubmit = async (e) => {
-            e.preventDefault();
-        
-            const newAvailability = {
-              day: parseInt(day, 10),
-              times: [{ times }],
-            };
-        
-            try {
-                const response = await axios.patch(`http://localhost:8000/businesses/${businessID}/availability`, {
-                  availability: newAvailability,
-                });
-                setBusiness(response.data);
-              } catch (err) {
-                setError(err.message);
-              }
-            };
+        try {
+            const res = await axios.patch(`http://localhost:8000/businesses/${businessID}/availability`, { availability: newAvailability });
+
+            setBusiness(res.data);
+
+        } catch (err) {
+            setError(err.message);
+        }
     };
 
     return (
@@ -108,6 +91,22 @@ const BusinessDashboard = () => {
                                 </CalendarGrid>
                             </CalendarBody>
                         </Calendar>
+                        {selectedDay !== null && (
+                            <AvailabilityForm onSubmit={handleAvailabilitySet}>
+                                <Title>Set Availability for July {selectedDay}, 2024</Title>
+                                {timeSlots.map((slot, index) => (
+                                    <TimeSlotItem 
+                                        key={index} 
+                                        onClick={() => handleTimeSlotClick(slot)} 
+                                        selected={selectedTimeSlot.includes(slot)}
+                                    >
+                                        {slot}
+                                    </TimeSlotItem>
+                                ))}
+                                <SubmitButton type="submit">Set Availability</SubmitButton>
+                                {error && <Text>Error: {error}</Text>}
+                            </AvailabilityForm>
+                        )}
                     </Section>
                     <Section>
                         <Title>Reviews</Title>
@@ -128,26 +127,6 @@ const BusinessDashboard = () => {
                     </Section>
                 </DashboardContent>
             </FormWrap>
-            {selectedDay !== null && (
-                <TimeSlotsModal>
-                    <CloseButton onClick={closeTimeSlotsModal}>Close</CloseButton>
-                    <Title>Time Slots for July {selectedDay}, 2024</Title>
-                    <ServicesSelect onChange={handleServiceChange} value={selectedService}>
-                        <option value="">Select a Service</option>
-                        {services.map((service, index) => (
-                            <ServiceOption key={index} value={service}>{service}</ServiceOption>
-                        ))}
-                    </ServicesSelect>
-                    {timeSlots.map((slot, index) => (
-                        <TimeSlotItem key={index} onClick={() => handleTimeSlotClick(slot)}>{slot}</TimeSlotItem>
-                    ))}
-                    {showThankYou && (
-                        <ThankYouNote>
-                            Thank you for booking {selectedService} for Wednesday July {selectedDay}, 2024 at {selectedTimeSlot.split('-')[0]}.
-                        </ThankYouNote>
-                    )}
-                </TimeSlotsModal>
-            )}
         </Container>
     );
 };
