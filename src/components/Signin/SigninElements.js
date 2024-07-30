@@ -118,3 +118,11 @@ export const TextLink = styled(Link)`
         color: darkslategray;  // Change color on hover 
     }
 `
+
+// Dropdown for user type
+export const FormSelect = styled.select`
+    padding: 16px 16px;
+    margin-bottom: 24px;  
+    border: none;
+    border-radius: 4px;
+`

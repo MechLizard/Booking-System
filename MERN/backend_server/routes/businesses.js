@@ -44,7 +44,6 @@ router.post('/register', async (req, res) => {
     }
 });
 
-// POST: Login => MongoDB
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
@@ -54,12 +53,16 @@ router.post('/login', async (req, res) => {
         const isMatch = await bcrypt.compare(password, business.password);
         if (!isMatch) return res.status(400).send('Invalid credentials');
 
+        //console.log('Business ID:', business._id); // For debugging
+
         const token = jwt.sign({ id: business._id, role: business.permissions }, 'your_jwt_secret', { expiresIn: '1h' });
-        res.status(200).json({ token, role: business.permissions });
+        res.status(200).json({ token, role: business.permissions, userId: business._id });
     } catch (error) {
+        console.error('Error logging in:', error); // For debugging
         res.status(500).send('Error logging in');
     }
 });
+
 
 // PATCH: modifies business (availability, price, bookings, reviews fields)
 
