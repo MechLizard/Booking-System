@@ -103,6 +103,7 @@ const BusinessDashboard = () => {
                     </Section>
                     <Section>
                         <Title>Calendar</Title>
+                        <Text>*This will become a button to the view bookings pop up*</Text>
                         <Calendar>
                             <CalendarHeader>
                                 <Text>July 2024</Text>
