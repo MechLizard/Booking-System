@@ -11,7 +11,7 @@ const BusinessRegister = () => {
         password: '',
         confirmPassword: '',
         permissions: 'business',
-        businessType: '',
+        serviceType: '',
     });
 
     const handleChange = (e) => {
@@ -26,8 +26,9 @@ const BusinessRegister = () => {
 
         try {
             const response = await axios.post('http://localhost:8000/businesses/register', formData);
+            console.log(formData); // For debugging
             console.log(response.data);
-            window.location.href = '/';
+            //window.location.href = '/';
         } catch (error) {
             console.error('There was an error submitting the form!', error);
         }
@@ -59,12 +60,12 @@ const BusinessRegister = () => {
                         <FormInput type='password' id='confirmPassword' required value={formData.confirmPassword} onChange={handleChange} />
 
                         {/* Business Type Dropdown */}
-                        <FormLabel htmlFor='businessType'>Business Type</FormLabel>
-                        <FormSelect id='businessType' required value={formData.businessType} onChange={handleChange}>
+                        <FormLabel htmlFor='serviceType'>Business Type</FormLabel>
+                        <FormSelect id='serviceType' required value={formData.serviceType} onChange={handleChange}>
                             <option value="">Select a business type</option>
-                            <option value="retail">Retail</option>
-                            <option value="service">Service</option>
-                            <option value="restaurant">Restaurant</option>
+                            <option value="Retail">Retail</option>
+                            <option value="Service">Service</option>
+                            <option value="Restaurant">Restaurant</option>
                         </FormSelect>
 
                         <FormButton type='submit'>Register</FormButton>

@@ -34,15 +34,19 @@ router.get('/', async (req, res) => {
 // POST: Register => MongoDB
 router.post('/register', async (req, res) => {
     const { name, serviceType, phone, zipcode, email, password, permissions } = req.body;
+    //console.log('Received data:', req.body); // For debugging
+
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         const newBusiness = new Business({ name, serviceType, phone, zipcode, email, password: hashedPassword, permissions });
         await newBusiness.save();
         res.status(201).send('Business registered');
     } catch (error) {
+        console.error('Error registering business:', error); // For debugging
         res.status(500).send('Error registering business');
     }
 });
+
 
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
