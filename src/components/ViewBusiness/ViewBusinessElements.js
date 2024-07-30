@@ -226,30 +226,3 @@ export const ThankYouNote = styled.div`
     color: #486856;
     text-align: center;
 `;
-
-export const AvailabilityForm = styled.form`
-    display: flex;
-    flex-direction: column;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    width: 80%;
-    max-width: 400px;
-    margin: 0 auto;
-`;
-
-// Submit button
-export const SubmitButton = styled.button`
-    background: darkslategrey;
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 10px;
-
-    &:hover {
-        background: grey;
-    }
-`;

@@ -16,7 +16,7 @@ mongoose.connect('mongodb://localhost:27017/MERN')
     console.log('Connected to MongoDB')
 
     // *=== Start the Express Server ===* //
-    const PORT = process.env.PORT || 5000;  // Use the port from the .env file or default to 5000
+    const PORT = process.env.PORT || 8000;  // Use the port from the .env file or default to 5000
     app.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}`);
       })
