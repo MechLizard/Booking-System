@@ -1,7 +1,21 @@
-*{
+/* CSS Reset */
+* {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Encode Sans Expanded',
-    sans-serif;
+    font-family: 'Encode Sans Expanded', sans-serif;
+}
+
+/* Ensures html and body take up the full height and width */
+html, body {
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden; /* Prevents horizontal scroll */
+    overflow-y: auto; /* Allows vertical scroll */
+}
+
+/* Container specific overflow handling*/
+.container {
+    overflow-y: auto; /* Allows vertical scroll within the container */
+    overflow-x: hidden; /* Prevents horizontal scroll within the container */
 }

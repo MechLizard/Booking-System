@@ -31,7 +31,7 @@ const CustomerDashboard = () => {
         : businesses;
 
     return (
-        <Container>
+        <Container style={{ height: '100vh', overflowY: 'auto' }}>
             <Icon to="/">THE FEED</Icon>
             <FormWrap>
                 <PageTitle>Find a Business You'll Love!</PageTitle>

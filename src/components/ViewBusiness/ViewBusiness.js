@@ -78,7 +78,7 @@ const ViewBusiness = () => {
     };
 
     return (
-        <Container>
+        <Container style={{ height: '100vh', overflowY: 'auto' }}>
             <Icon to="/">THE FEED</Icon>
             <FormWrap>
                 <DashboardContent>
