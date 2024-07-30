@@ -28,7 +28,7 @@ const BusinessRegister = () => {
             const response = await axios.post('http://localhost:8000/businesses/register', formData);
             console.log(formData); // For debugging
             console.log(response.data);
-            //window.location.href = '/';
+            window.location.href = '/';
         } catch (error) {
             console.error('There was an error submitting the form!', error);
         }

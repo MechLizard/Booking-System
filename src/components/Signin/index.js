@@ -89,7 +89,6 @@ const SignIn = () => {
                         <FormButton type='submit'>Continue</FormButton>
                         <TextLink to="/register/customer">CREATE AN ACCOUNT</TextLink>
                         <TextLink to="/register/business">REGISTER YOUR BUSINESS</TextLink>
-                        <TextLink to="/testing">Testing</TextLink>
                     </Form>
                 </FormContent>
             </FormWrap>

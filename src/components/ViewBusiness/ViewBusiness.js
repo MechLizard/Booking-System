@@ -1,6 +1,8 @@
 // Customer POV of Business Dashboard (currently setup for Customer)
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
 import { Container, FormWrap, Icon, DashboardContent, Section, Title, Text, Calendar, Reviews, ProfitCounter, CalendarHeader, CalendarBody, DayNames, DayBox, DayName, CalendarGrid, ReviewItem, ReviewText, ReviewAuthor, TimeSlotsModal, TimeSlotItem, CloseButton, ServicesSelect, ServiceOption, ThankYouNote } from './ViewBusinessElements';
 
 const ViewBusiness = () => {
@@ -8,6 +10,27 @@ const ViewBusiness = () => {
     const [selectedService, setSelectedService] = useState("");
     const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
     const [showThankYou, setShowThankYou] = useState(false);
+
+    //For business display
+    const { id } = useParams(); // Get the business ID from the URL
+    const [business, setBusiness] = useState(null);
+
+    useEffect(() => {
+        const getBusiness = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8000/businesses/${id}`);
+                setBusiness(response.data);
+            } catch (error) {
+                console.error('Error fetching business details:', error);
+            }
+        };
+
+        getBusiness();
+    }, [id]);
+
+    if (!business) {
+        return <p>Loading...</p>;
+    }
 
     // Generated array for days in the month
     const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1);
@@ -79,14 +102,15 @@ const ViewBusiness = () => {
 
     return (
         <Container style={{ height: '100vh', overflowY: 'auto' }}>
-            <Icon to="/">THE FEED</Icon>
+            <Icon to="/customer-dashboard">THE FEED</Icon>
             <FormWrap>
                 <DashboardContent>
                     <Section>
-                        <Title>Joe Toilet</Title>
-                        <ProfitCounter>Profit: $129,345</ProfitCounter>
-                        <Text>Business Rating: ★★★★★</Text>
-                        <Text>Description: We're the best plumbers in the bizz. Come on down to Joe toilet for all your toilet needs, heck we even do sinks.</Text>
+                        <Title>{business.name}</Title>
+                        <Text>Business Rating: ...★</Text>
+                        <Text>Description: ...</Text>
+                        <Text>Phone: {business.phone}</Text>
+                        <Text>Zipcode: {business.zipcode}</Text>
                     </Section>
                     <Section>
                         <Title>Calendar</Title>

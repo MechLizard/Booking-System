@@ -20,7 +20,7 @@ function App() {
                         <Route path="/business-dashboard" element={<BusinessDashboard />} />
                         <Route path="/customer-dashboard" element={<CustomerDashboard />} />
                         <Route path="/testing" element={<Testing />} />
-                        <Route path="/view-business" element={<ViewBusiness/>} />
+                        <Route path="/view-business/:id" element={<ViewBusiness />} />
                     </Routes>
                 </Router>
             </div>

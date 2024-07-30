@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
 import { Container, FormWrap, PageTitle, FormContent, Dropdown, Tile, TileContent, TileHeader, Icon } from './CustomerDashboardElements';
 
 const CustomerDashboard = () => {
     const [selectedService, setSelectedService] = useState('');
     const [businesses, setBusinesses] = useState([]);
+    const navigate = useNavigate(); // Initialize useNavigate
 
     // get business data from API
     useEffect(() => {
@@ -12,6 +14,7 @@ const CustomerDashboard = () => {
             try {
                 const response = await axios.get('http://localhost:8000/businesses');
                 setBusinesses(response.data);
+                console.log(response.data);
             } catch (error) {
                 console.error('Error fetching businesses:', error);
             }
@@ -20,12 +23,17 @@ const CustomerDashboard = () => {
         getBusinesses();
     }, []);
 
-    //for service select dropdown
+    // for service select dropdown
     const handleServiceChange = (e) => {
         setSelectedService(e.target.value);
     };
 
-    //Search by service type
+    // handle tile click
+    const handleTileClick = (id) => {
+        navigate(`/view-business/${id}`);
+    };
+
+    // Search by service type
     const filteredTiles = selectedService
         ? businesses.filter(business => business.serviceType === selectedService)
         : businesses;
@@ -46,11 +54,11 @@ const CustomerDashboard = () => {
 
                     {/* Display tiles */}
                     {filteredTiles.map((business, index) => (
-                        <Tile key={index}>
+                        <Tile key={index} onClick={() => handleTileClick(business._id)}>
                             <TileContent>
                                 <TileHeader>{business.name}</TileHeader>
                                 <p>{business.rating} ★</p>
-                                <p>{business.serviceType}</p> {/* SOMETHING IS WRONG WITH REGISTER, SERVICE TYPE DOES NOT APPEAR IN MONGO */}
+                                <p>{business.serviceType}</p>
                             </TileContent>
                         </Tile>
                     ))}
