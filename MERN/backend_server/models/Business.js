@@ -2,7 +2,11 @@ const mongoose = require('mongoose');
 
 const BookingSchema = new mongoose.Schema({
     customerEmail: String,
+    customerPhone: String,
+    businessName: String,
+    businessPhone: String,
     Service: String,
+    Price: String,
     Date: Number,
     Time: String,
     Index: Number,
