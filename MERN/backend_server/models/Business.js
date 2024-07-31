@@ -45,10 +45,8 @@ const AvailabilitySchema = new mongoose.Schema({
 const BusinessSchema = new mongoose.Schema({
     name: String,
     phone: String,
-    email: { 
-        type: String, 
-        unique: true, 
-    },
+    email: { type: String, unique: true },
+    zipcode: String,
     password: String,
     serviceType: String, // type of business (i.e. plumber) for dropdown
     servicesOffered: [servicesOfferedSchema], // services offered

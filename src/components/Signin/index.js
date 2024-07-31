@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { Container, Form, FormButton, FormContent, FormH1, FormInput, FormLabel, FormWrap, Icon, TextLink } from './SigninElements';
+import { Container, Form, FormButton, FormContent, FormH1, FormInput, FormLabel, FormWrap, Icon, TextLink, FormSelect } from './SigninElements';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const SignIn = () => {
     const [formData, setFormData] = useState({
         email: '',
-        password: ''
+        password: '',
+        role: 'customer' // default to customer
     });
 
     const navigate = useNavigate();
@@ -18,28 +19,42 @@ const SignIn = () => {
         });
     };
 
+    const handleRoleChange = (e) => {
+        setFormData({
+            ...formData,
+            role: e.target.value
+        });
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            // Make the POST request to your backend for authentication
-            const response = await axios.post('http://localhost:8000/users/login', formData);
+            // Determine endpoint based on the selected role from drop down
+            const endpoint = formData.role === 'business'
+                ? 'http://localhost:8000/businesses/login'
+                : 'http://localhost:8000/users/login';
 
-            // Save the token and permissions to local storage or state
+            // Make the post request to endpoint
+            const response = await axios.post(endpoint, formData);
+
+            // Save the token, user ID, and permissions to local storage
             localStorage.setItem('authToken', response.data.token);
-            const permissions = response.data.role;
+            localStorage.setItem('userId', response.data.userId);
+            localStorage.setItem('role', response.data.role);
 
-            // Redirect based on the user's permissions
-            if (permissions === 'customer') {
+            console.log('User ID saved to local storage:', localStorage.getItem('userId'));
+
+            // Redirect based on the user's role
+            if (response.data.role === 'customer') {
                 navigate('/customer-dashboard');
-            } else if (permissions === 'business') {
+            } else if (response.data.role === 'business') {
                 navigate('/business-dashboard');
             } else {
                 navigate('/');
             }
         } catch (error) {
             console.error('There was an error with the login process:', error);
-            // Handle errors, e.g., show an error message
         }
     };
 
@@ -66,13 +81,14 @@ const SignIn = () => {
                             value={formData.password}
                             onChange={handleChange}
                         />
+                        <FormLabel htmlFor='role'>Select Role</FormLabel>
+                        <FormSelect id='role' value={formData.role} onChange={handleRoleChange}>
+                            <option value="customer">Customer</option>
+                            <option value="business">Business</option>
+                        </FormSelect>
                         <FormButton type='submit'>Continue</FormButton>
                         <TextLink to="/register/customer">CREATE AN ACCOUNT</TextLink>
                         <TextLink to="/register/business">REGISTER YOUR BUSINESS</TextLink>
-                        <TextLink to="/business-dashboard">BUSINESS POV</TextLink>
-                        <TextLink to="/customer-dashboard">CUSTOMER POV</TextLink>
-                        <TextLink to="/testing">TESTING</TextLink>
-                        <TextLink to="/view-business">View Business</TextLink>
                     </Form>
                 </FormContent>
             </FormWrap>

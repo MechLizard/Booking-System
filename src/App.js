@@ -11,17 +11,19 @@ import ViewBusiness from './components/ViewBusiness/ViewBusiness';
 
 function App() {
     return (
-        <Router>
-            <Routes>
-                <Route path="/" element={<SignIn/>} exact />
-                <Route path="/register/customer" element={<CustomerRegister />} />
-                <Route path="/register/business" element={<BusinessRegister />} />
-                <Route path="/business-dashboard" element={<BusinessDashboard />} />
-                <Route path="/customer-dashboard" element={<CustomerDashboard />} />
-                <Route path="/testing" element={<Testing />} />
-                <Route path="/view-business" element={<ViewBusiness/>} />
-            </Routes>
-        </Router>
+            <div className="container" style={{ height: '100vh', width: '100vw' }}>
+                <Router>
+                    <Routes>
+                        <Route path="/" element={<SignIn/>} exact />
+                        <Route path="/register/customer" element={<CustomerRegister />} />
+                        <Route path="/register/business" element={<BusinessRegister />} />
+                        <Route path="/business-dashboard" element={<BusinessDashboard />} />
+                        <Route path="/customer-dashboard" element={<CustomerDashboard />} />
+                        <Route path="/testing" element={<Testing />} />
+                        <Route path="/view-business/:id" element={<ViewBusiness />} />
+                    </Routes>
+                </Router>
+            </div>
     );
 }
 
