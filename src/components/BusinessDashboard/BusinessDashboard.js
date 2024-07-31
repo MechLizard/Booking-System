@@ -69,11 +69,14 @@ const BusinessDashboard = () => {
 
         const newAvailability = {
             day: selectedDay,
-            times: selectedTimeSlot
+            times: selectedTimeSlot.map(slot => ({ times: slot }))
         };
 
+       // sort availability by day??
+
         try {
-            const res = await axios.patch(`http://localhost:8000/businesses/${businessID}/availability`, { availability: newAvailability });
+            const userId = localStorage.getItem('userId');
+            const res = await axios.patch(`http://localhost:8000/businesses/${userId}/availability`, { availability: newAvailability });
 
             setBusiness(res.data);
 
