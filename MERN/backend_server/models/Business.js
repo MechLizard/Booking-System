@@ -5,17 +5,13 @@ const BookingSchema = new mongoose.Schema({
     customerPhone: String, // to meet functional requirements
     businessName: String,
     businessPhone: String,
-    Service: String,
-    Price: String,
-    Date: {
-        type: String,
-        unique: true,
-    },                  // how to prevent duplicates of date/time??
+    service: String,
+    day: Number, // how to prevent duplicates of date/time??    
     Time: {
         type: String,
         unique: true,
     },
-    Index: Number,
+    index: Number,
 });
 
 const ReviewsSchema = new mongoose.Schema({
@@ -28,21 +24,31 @@ const ReviewsSchema = new mongoose.Schema({
 
 const servicesOfferedSchema = new mongoose.Schema({
     service: String,
+    price: Number,
 });
 
 const TimesSchema = new mongoose.Schema({
-    times: String,
+    times: {
+        type: String,
+        unique: true, // add or not? -> goal: only one of each timestamp (no duplicates of "9:00-10:00")
+    },
 })
 
 const AvailabilitySchema = new mongoose.Schema({
-    day: Number,
+    day: {
+        type: Number,
+        unique: true, // add or not? -> goal: only one of each timestamp (no duplicates of "day 1")
+    },
     times: [TimesSchema],
 });
 
 const BusinessSchema = new mongoose.Schema({
     name: String,
     phone: String,
-    email: { type: String, unique: true },
+    email: { 
+        type: String, 
+        unique: true, 
+    },
     password: String,
     serviceType: String, // type of business (i.e. plumber) for dropdown
     servicesOffered: [servicesOfferedSchema], // services offered
