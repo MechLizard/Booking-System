@@ -2,13 +2,19 @@ const mongoose = require('mongoose');
 
 const BookingSchema = new mongoose.Schema({
     customerEmail: String,
-    customerPhone: String,
+    customerPhone: String, // to meet functional requirements
     businessName: String,
     businessPhone: String,
     Service: String,
     Price: String,
-    Date: Number,
-    Time: String,
+    Date: {
+        type: String,
+        unique: true,
+    },                  // how to prevent duplicates of date/time??
+    Time: {
+        type: String,
+        unique: true,
+    },
     Index: Number,
 });
 
