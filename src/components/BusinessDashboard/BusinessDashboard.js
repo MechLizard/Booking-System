@@ -82,9 +82,10 @@ const BusinessDashboard = () => {
         }
     };
 
-    if (!business) {
-        return <Container>Loading...</Container>;
-    }
+
+    //INSERT HANDLE EDIT DESCRIPTION FUNCTION HERE
+
+    //INSERT HANDLE SEE BOOKINGS FUNCTION HERE
 
     if (!business) {
         return <Container>Loading...</Container>;
@@ -100,10 +101,10 @@ const BusinessDashboard = () => {
                         <ProfitCounter>Profit: ${business.profit}</ProfitCounter>
                         <Text>Business Rating: {business.rating}</Text>
                         <Text>Description: {business.description}</Text>
+                        <CloseButton>Edit Description</CloseButton>
                     </Section>
                     <Section>
                         <Title>Calendar</Title>
-                        <Text>*This will become a button to the view bookings pop up*</Text>
                         <Calendar>
                             <CalendarHeader>
                                 <Text>July 2024</Text>
@@ -138,6 +139,7 @@ const BusinessDashboard = () => {
                                 {error && <Text>Error: {error}</Text>}
                             </AvailabilityForm>
                         )}
+                        <CloseButton>See Bookings</CloseButton>
                     </Section>
                     <Section>
                         <Title>Reviews</Title>
