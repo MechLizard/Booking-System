@@ -28,10 +28,9 @@ const servicesOfferedSchema = new mongoose.Schema({
 });
 
 const TimesSchema = new mongoose.Schema({
-    times: {
-        type: String,
-        unique: true, // add or not? -> goal: only one of each timestamp (no duplicates of "9:00-10:00")
-    },
+    times: String,
+     // add or not? -> goal: only one of each timestamp (no duplicates of "9:00-10:00")
+
 })
 
 const AvailabilitySchema = new mongoose.Schema({
