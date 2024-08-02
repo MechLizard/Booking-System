@@ -253,3 +253,84 @@ export const SubmitButton = styled.button`
         background: grey;
     }
 `;
+
+// Container for bookings modal
+export const BookingsContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 10px; 
+`;
+
+// Container for each booking object
+export const BookingItem = styled.div`
+    border: 1px solid #ddd; 
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+// Modal container for adding a new service
+export const AddServiceModal = styled.div`
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`;
+
+// Button to open the "Add Service" modal
+export const AddServiceButton = styled.button`
+    background: darkslategrey; 
+    color: #fff; 
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 10px 0;
+
+    &:hover {
+        background: slategray; 
+    }
+`;
+
+// Form container inside the modal
+export const AddServiceForm = styled.form`
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+`;
+
+// Input field for form
+export const Input = styled.input`
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 16px;
+`;
+
+// Label for form inputs
+export const Label = styled.label`
+    font-size: 16px;
+    color: #495057;
+`;
+
+// Group for form elements
+export const FormGroup = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+`;
+

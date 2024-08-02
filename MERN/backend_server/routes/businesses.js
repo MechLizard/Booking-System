@@ -158,4 +158,28 @@ router.patch('/:id/price', async (req, res) => {
     }
 });
 
+// *=== Services Offered ===* //
+router.patch('/:id/services', async (req, res) => {
+    const { id } = req.params;
+    const { service, price } = req.body;
+
+    try {
+        const business = await Business.findById(id);
+        if (!business) return res.status(404).json({ msg: 'Business not found' });
+        const existingServiceIndex = business.servicesOffered.findIndex(s => s.service === service);
+        if (existingServiceIndex > -1) {
+            business.servicesOffered[existingServiceIndex].price = price;
+            console.log('Service Exists'); // For debugging
+        } else {
+            business.servicesOffered.push({ service, price });
+            console.log('Service Added'); // For debugging
+        }
+        await business.save();
+        res.status(200).json(business);
+    } catch (err) {
+        res.status(500).json({ msg: err.message });
+    }
+});
+
+
 module.exports = router;

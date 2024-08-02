@@ -15,6 +15,7 @@ const ViewBusiness = () => {
     const { id } = useParams(); // Get the business ID from the URL
     const [business, setBusiness] = useState(null);
 
+    // get business' data
     useEffect(() => {
         const getBusiness = async () => {
             try {
@@ -35,7 +36,7 @@ const ViewBusiness = () => {
     // Generated array for days in the month
     const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1);
 
-    // goal: update timeSlots with actual
+    // goal: update timeSlots with actual times
 
     const timeSlots = [
         "9:00-10:00 AM",
@@ -48,26 +49,52 @@ const ViewBusiness = () => {
         "4:00-5:00 PM"
     ];
 
+    // goal update services with actual services offered
     const services = [
         "Toilet Unclogging",
         "Sink Repair",
         "The Joe Special"
     ];
 
+    // Event handler for day clicks
     const handleDayClick = (day) => {
         setSelectedDay(day);
         setShowThankYou(false);
     };
 
+    // Event handler for service selection
     const handleServiceChange = (e) => {
         setSelectedService(e.target.value);
     };
 
-    const handleTimeSlotClick = (slot) => {
-        setSelectedTimeSlot(slot);
-        setShowThankYou(true);
+    //Creates and sends new booking object when customer clicks book
+    const handleTimeSlotClick = async (slot) => {
+        const userId = localStorage.getItem('userId');
+
+        try {
+            // Fetches customer details using userId from local storage (saved at signin)
+            const customerResponse = await axios.get(`http://localhost:8000/users/${userId}`);
+            const customerEmail = customerResponse.data.email;
+
+            // Booking object
+            const newBooking = {
+                customerEmail: customerEmail,
+                service: selectedService,
+                day: selectedDay,
+                Time: slot,
+            };
+
+            // Add booking to business' bookings array
+            const response = await axios.patch(`http://localhost:8000/businesses/${id}/booking`, { booking: newBooking });
+            setBusiness(response.data);
+            setShowThankYou(true);
+        } catch (error) {
+            console.error('Error booking service:', error);
+        }
     };
 
+
+    // Reset timeslot modal
     const closeTimeSlotsModal = () => {
         setSelectedDay(null);
         setSelectedService("");
@@ -75,6 +102,7 @@ const ViewBusiness = () => {
         setShowThankYou(false);
     };
 
+    // Update availability from business data
     const BusinessUpdateAvailability = (businessID) => {
         const [day, setDay] = useState('');
         const [times, setTimes] = useState('');
