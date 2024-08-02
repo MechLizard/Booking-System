@@ -1,20 +1,20 @@
+// Adalys - Work from 8/2 (prevent merge conflicts)
+
 import React, { useState, useEffect } from 'react';
-import { Container, FormWrap, Icon, DashboardContent, Section, Title, Text, Calendar, Reviews, ProfitCounter, CalendarHeader, CalendarBody, DayNames, DayBox, DayName, CalendarGrid, ReviewItem, ReviewText, ReviewAuthor, TimeSlotsModal, TimeSlotItem, CloseButton, AvailabilityForm, SubmitButton, BookingsContainer, BookingItem, AddServiceModal, AddServiceForm, AddServiceButton, FormGroup, Label, Input} from './BusinessDashboardElements';
+import { Container, FormWrap, Icon, DashboardContent, Section, Title, Text, Calendar, Reviews, ProfitCounter, CalendarHeader, CalendarBody, DayNames, DayBox, DayName, CalendarGrid, ReviewItem, ReviewText, ReviewAuthor, TimeSlotsModal, TimeSlotItem, CloseButton, ServicesSelect, ServiceOption, ThankYouNote, AvailabilityForm, DescriptionForm, DescriptionTextarea, SubmitButton } from './BusinessDashboardElements';
 import axios from 'axios';
 
 const BusinessDashboard = () => {
     const [selectedDay, setSelectedDay] = useState(null);
     const [selectedService, setSelectedService] = useState("");
-    const [selectedTimeSlot, setSelectedTimeSlot] = useState([]);
-    const [showThankYou, setShowThankYou] = useState(false); // TY visibility state
-    const [showBookingsModal, setShowBookingsModal] = useState(false); // Modal visibility state
-    const [showAddServiceModal, setShowAddServiceModal] = useState(false); // Add service modal visibility state
+    const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
+    const [showThankYou, setShowThankYou] = useState(false);
 
-    const [business, setBusiness] = useState(null); // will become business "object"
-    const [error, setError] = useState(null);
-    const [service, setService] = useState('');
-    const [price, setPrice] = useState('');
-    const [servicesOffered, setServicesOffered] = useState([]);
+    const [ business, setBusiness ] = useState(null); // will become business "object"
+    const [ error, setError ] = useState(null);
+
+    const [newDescription, setNewDescription] = useState("");
+    const [showDescription, setShowDescription] = useState(false);
 
     // This function fetches the business data based on the locally saved userID
     useEffect(() => {
@@ -24,7 +24,6 @@ const BusinessDashboard = () => {
                 try {
                     const response = await axios.get(`http://localhost:8000/businesses/${userId}`);
                     setBusiness(response.data); //Captures the data from the given user id
-                    setServicesOffered(response.data.servicesOffered);
                 } catch (error) {
                     console.error('Error fetching business details:', error);
                 }
@@ -37,7 +36,7 @@ const BusinessDashboard = () => {
     // Generated array for days in the month
     const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1);
 
-    // goal: update timeSlots with actual
+    // goal: update timeSlots with actual 
 
     const timeSlots = [
         "9:00-10:00 AM",
@@ -50,18 +49,15 @@ const BusinessDashboard = () => {
         "4:00-5:00 PM"
     ];
 
-    // Event handler for day clicks
     const handleDayClick = (day) => {
         setSelectedDay(day);
         setShowThankYou(false);
     };
 
-    // Event handler for service selection
     const handleServiceChange = (e) => {
         setSelectedService(e.target.value);
     };
 
-    // Event handler for time slot selection
     const handleTimeSlotClick = (slot) => {
         setSelectedTimeSlot(prevSlots => {
             if (prevSlots.includes(slot)) {
@@ -72,9 +68,7 @@ const BusinessDashboard = () => {
         });
     };
 
-    // Set availability for business
     const handleAvailabilitySet = async (e) => {
-        e.preventDefault();
 
         const newAvailability = {
             day: selectedDay,
@@ -84,47 +78,35 @@ const BusinessDashboard = () => {
        // sort availability by day??
 
         try {
-            const userId = localStorage.getItem('userId');
-            const res = await axios.patch(`http://localhost:8000/businesses/${userId}/availability`, { availability: newAvailability });
+        
+            const res = await axios.patch(`http://localhost:8000/businesses/${business._id}/availability`, { availability: newAvailability });
 
             setBusiness(res.data);
-            console.log(res.data);
+
         } catch (err) {
             setError(err.message);
         }
     };
 
-    // Add new service
-    const handleAddService = async (e) => {
+
+    //INSERT HANDLE EDIT DESCRIPTION FUNCTION HERE
+
+    const handleAddDescription = async (e) => {
         e.preventDefault();
 
-        const newService = { service, price };
-
         try {
-            const res = await axios.patch(`http://localhost:8000/businesses/${business._id}/services`, {
-                servicesOffered: [...servicesOffered, newService]
-            });
-            setServicesOffered([...servicesOffered, newService]);
-            setService('');
-            setPrice('');
-            toggleAddServiceModal();
+            const res = await axios.patch(`http://localhost:8000/businesses/${business._id}/description`, { description: newDescription });
+
+            setBusiness(res.data);
+            setNewDescription("");
+            setShowDescription(false);
+
         } catch (err) {
             setError(err.message);
         }
     };
 
-    // Toggle add service modal
-    const toggleAddServiceModal = () => setShowAddServiceModal(!showAddServiceModal);
-
-    // Event handler for bookings button
-    const handleSeeBookings = () => {
-        setShowBookingsModal(true);
-    };
-
-    // Event handler for close button on bookings modal
-    const handleCloseBookingsModal = () => {
-        setShowBookingsModal(false);
-    };
+    //INSERT HANDLE SEE BOOKINGS FUNCTION HERE
 
     if (!business) {
         return <Container>Loading...</Container>;
@@ -139,8 +121,20 @@ const BusinessDashboard = () => {
                         <Title>{business.name}</Title>
                         <ProfitCounter>Profit: ${business.profit}</ProfitCounter>
                         <Text>Business Rating: {business.rating}</Text>
-                        <Text>Description: {business.description}</Text>
-                        <CloseButton>Edit Description</CloseButton>
+                        <CloseButton onClick={() => setShowDescription(!showDescription)}>
+                            {showDescription ? "Cancel" : "Edit Description"}
+                        </CloseButton>
+                        {DescriptionForm && (
+                            <form onSubmit={handleAddDescription}>
+                                <DescriptionTextarea
+                                    value={newDescription}
+                                    onChange={(e) => setNewDescription(e.target.value)}
+                                    placeholder="Enter description here"
+                                    required
+                                />
+                                <SubmitButton type="submit">Update Description</SubmitButton>
+                            </form>
+                        )}
                     </Section>
                     <Section>
                         <Title>Calendar</Title>
@@ -157,6 +151,7 @@ const BusinessDashboard = () => {
                                 <CalendarGrid>
                                     {daysInMonth.map(day => (
                                         <DayBox key={day} onClick={() => handleDayClick(day)}>{day}</DayBox>
+
                                     ))}
                                 </CalendarGrid>
                             </CalendarBody>
@@ -177,8 +172,7 @@ const BusinessDashboard = () => {
                                 {error && <Text>Error: {error}</Text>}
                             </AvailabilityForm>
                         )}
-                        <AddServiceButton onClick={toggleAddServiceModal}>Add New Service</AddServiceButton>
-                        <AddServiceButton onClick={handleSeeBookings}>See Bookings</AddServiceButton>
+                        <CloseButton>See Bookings</CloseButton>
                     </Section>
                     <Section>
                         <Title>Reviews</Title>
@@ -199,59 +193,44 @@ const BusinessDashboard = () => {
                     </Section>
                 </DashboardContent>
             </FormWrap>
-
-            {showBookingsModal && (
-                <BookingsModal bookings={business.booking} onClose={handleCloseBookingsModal} />
-            )}
-
-            {showAddServiceModal && (
-                <AddServiceModal>
-                    <Title>Add New Service</Title>
-                    <AddServiceForm onSubmit={handleAddService}>
-                        <FormGroup>
-                            <Label for="service">Service</Label>
-                            <Input
-                                type="text"
-                                id="service"
-                                value={service}
-                                onChange={(e) => setService(e.target.value)}
-                                required
-                            />
-                        </FormGroup>
-                        <FormGroup>
-                            <Label for="price">Price</Label>
-                            <Input
-                                type="number"
-                                id="price"
-                                value={price}
-                                onChange={(e) => setPrice(e.target.value)}
-                                required
-                            />
-                        </FormGroup>
-                        <SubmitButton type="submit">Add Service</SubmitButton>
-                        {error && <Text>Error: {error}</Text>}
-                    </AddServiceForm>
-                    <CloseButton onClick={toggleAddServiceModal}>Close</CloseButton>
-                </AddServiceModal>
-            )}
         </Container>
     );
 };
 
-const BookingsModal = ({ bookings, onClose }) => (
-    <TimeSlotsModal>
-        <Title>Bookings</Title>
-        <BookingsContainer>
-            {bookings.map((booking, index) => (
-                <BookingItem key={index}>
-                    <Text>Date: {booking.day} July 2024</Text>
-                    <Text>Time: {booking.Time}</Text>
-                    <Text>Customer: {booking.customerEmail}</Text>
-                </BookingItem>
-            ))}
-        </BookingsContainer>
-        <CloseButton onClick={onClose}>Close</CloseButton>
-    </TimeSlotsModal>
-);
-
 export default BusinessDashboard;
+
+// export const DescriptionForm = styled.form`
+// display: flex;
+// flex-direction: column;
+// background: white;
+// padding: 20px;
+// border-radius: 8px;
+// box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+// width: 80%;
+// max-width: 600px;
+// margin: 20px auto;
+// `;
+
+// // Textarea input for the description
+// export const DescriptionTextarea = styled.textarea`
+// width: 100%;
+// height: 100px;
+// padding: 10px;
+// margin-bottom: 10px;
+// border-radius: 4px;
+// border: 1px solid #ccc;
+// font-size: 16px;
+// `;
+
+// // * === Description === * //
+// router.patch('/:id/description', async (req, res) => {
+//     const { id } = req.params;
+//     const { description } = req.body;
+
+//     try {
+//         const business = await Business.findByIdAndUpdate(id, { $push: { description: description } }, { new: true });
+//         res.status(200).json(business);
+//     } catch (err) {
+//         res.status(500).json({ msg: err.message });
+//     }
+// });
