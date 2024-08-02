@@ -1,32 +1,45 @@
-import React, { useState } from 'react';
-import {Container, FormWrap, PageTitle, FormContent, Dropdown, Tile, TileContent, TileHeader, Icon} from './CustomerDashboardElements';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
+import { Container, FormWrap, PageTitle, FormContent, Dropdown, Tile, TileContent, TileHeader, Icon } from './CustomerDashboardElements';
 
 const CustomerDashboard = () => {
     const [selectedService, setSelectedService] = useState('');
+    const [businesses, setBusinesses] = useState([]);
+    const navigate = useNavigate(); // Initialize useNavigate
 
+    // get business data from API
+    useEffect(() => {
+        const getBusinesses = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/businesses');
+                setBusinesses(response.data);
+                console.log(response.data);
+            } catch (error) {
+                console.error('Error fetching businesses:', error);
+            }
+        };
+
+        getBusinesses();
+    }, []);
+
+    // for service select dropdown
     const handleServiceChange = (e) => {
         setSelectedService(e.target.value);
     };
 
-    // Add retrieve calls from mongo here i think
-    // .get('/businesses/${businessID}') for specific business
-    // .get('/businesses') for list of all businesses
+    // handle tile click
+    const handleTileClick = (id) => {
+        navigate(`/view-business/${id}`);
+    };
 
-    // fill data for tiles here
-    const tilesData = [
-        { name: "Joe Toilet", rating: "5 ★", type: "Service" },
-        { name: "Adalys' Closet", rating: "4.7 ★", type: "Retail" },
-        { name: "Cody's Comics", rating: "4.5 ★", type: "Retail" },
-        { name: "Izzy-Freezy Ice Cream", rating: "4.4 ★", type: "Restaurant" },
-        { name: "Carmen's Rat Emporium", rating: "1.3 ★", type: "Service" }
-    ];
-
+    // Search by service type
     const filteredTiles = selectedService
-        ? tilesData.filter(tile => tile.type === selectedService)
-        : tilesData;
+        ? businesses.filter(business => business.serviceType === selectedService)
+        : businesses;
 
     return (
-        <Container>
+        <Container style={{ height: '100vh', overflowY: 'auto' }}>
             <Icon to="/">THE FEED</Icon>
             <FormWrap>
                 <PageTitle>Find a Business You'll Love!</PageTitle>
@@ -40,12 +53,12 @@ const CustomerDashboard = () => {
                     </Dropdown>
 
                     {/* Display tiles */}
-                    {filteredTiles.map((tile, index) => (
-                        <Tile key={index}>
+                    {filteredTiles.map((business, index) => (
+                        <Tile key={index} onClick={() => handleTileClick(business._id)}>
                             <TileContent>
-                                <TileHeader>{tile.name}</TileHeader>
-                                <p>{tile.rating}</p>
-                                <p>{tile.type}</p>
+                                <TileHeader>{business.name}</TileHeader>
+                                <p>{business.rating} ★</p>
+                                <p>{business.serviceType}</p>
                             </TileContent>
                         </Tile>
                     ))}
@@ -53,6 +66,6 @@ const CustomerDashboard = () => {
             </FormWrap>
         </Container>
     );
-}
+};
 
 export default CustomerDashboard;

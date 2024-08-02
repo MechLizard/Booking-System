@@ -1,7 +1,8 @@
 // BusinessPOV of Business dashboard SET AVAILABILITY HERE ADALYS
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, FormWrap, Icon, DashboardContent, Section, Title, Text, Calendar, Reviews, ProfitCounter, CalendarHeader, CalendarBody, DayNames, DayBox, DayName, CalendarGrid, ReviewItem, ReviewText, ReviewAuthor, TimeSlotsModal, TimeSlotItem, CloseButton, ServicesSelect, ServiceOption, ThankYouNote, AvailabilityForm, SubmitButton } from './BusinessDashboardElements';
+import axios from 'axios';
 
 const BusinessDashboard = () => {
     const [selectedDay, setSelectedDay] = useState(null);
@@ -11,6 +12,23 @@ const BusinessDashboard = () => {
 
     const [ business, setBusiness ] = useState(null); // will become business "object"
     const [ error, setError ] = useState(null);
+
+    // This function fetches the business data based on the locally saved userID
+    useEffect(() => {
+        const fetchBusinessDetails = async () => {
+            const userId = localStorage.getItem('userId'); //This gets the user ID from local storage (saved at signin)
+            if (userId) {
+                try {
+                    const response = await axios.get(`http://localhost:8000/businesses/${userId}`);
+                    setBusiness(response.data); //Captures the data from the given user id
+                } catch (error) {
+                    console.error('Error fetching business details:', error);
+                }
+            }
+        };
+
+        fetchBusinessDetails();
+    }, []);
 
     // Generated array for days in the month
     const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1);
@@ -31,6 +49,10 @@ const BusinessDashboard = () => {
     const handleDayClick = (day) => {
         setSelectedDay(day);
         setShowThankYou(false);
+    };
+
+    const handleServiceChange = (e) => {
+        setSelectedService(e.target.value);
     };
 
     const handleTimeSlotClick = (slot) => {
@@ -60,16 +82,26 @@ const BusinessDashboard = () => {
         }
     };
 
+
+    //INSERT HANDLE EDIT DESCRIPTION FUNCTION HERE
+
+    //INSERT HANDLE SEE BOOKINGS FUNCTION HERE
+
+    if (!business) {
+        return <Container>Loading...</Container>;
+    }
+
     return (
-        <Container>
+        <Container style={{ height: '100vh', overflowY: 'auto' }}>
             <Icon to="/">THE FEED</Icon>
             <FormWrap>
                 <DashboardContent>
                     <Section>
-                        <Title>Joe Toilet</Title>
-                        <ProfitCounter>Profit: $129,345</ProfitCounter>
-                        <Text>Business Rating: ★★★★★</Text>
-                        <Text>Description: We're the best plumbers in the bizz. Come on down to Joe toilet for all your toilet needs, heck we even do sinks.</Text>
+                        <Title>{business.name}</Title>
+                        <ProfitCounter>Profit: ${business.profit}</ProfitCounter>
+                        <Text>Business Rating: {business.rating}</Text>
+                        <Text>Description: {business.description}</Text>
+                        <CloseButton>Edit Description</CloseButton>
                     </Section>
                     <Section>
                         <Title>Calendar</Title>
@@ -86,7 +118,7 @@ const BusinessDashboard = () => {
                                 <CalendarGrid>
                                     {daysInMonth.map(day => (
                                         <DayBox key={day} onClick={() => handleDayClick(day)}>{day}</DayBox>
-                                        
+
                                     ))}
                                 </CalendarGrid>
                             </CalendarBody>
@@ -95,9 +127,9 @@ const BusinessDashboard = () => {
                             <AvailabilityForm onSubmit={handleAvailabilitySet}>
                                 <Title>Set Availability for July {selectedDay}, 2024</Title>
                                 {timeSlots.map((slot, index) => (
-                                    <TimeSlotItem 
-                                        key={index} 
-                                        onClick={() => handleTimeSlotClick(slot)} 
+                                    <TimeSlotItem
+                                        key={index}
+                                        onClick={() => handleTimeSlotClick(slot)}
                                         selected={selectedTimeSlot.includes(slot)}
                                     >
                                         {slot}
@@ -107,6 +139,7 @@ const BusinessDashboard = () => {
                                 {error && <Text>Error: {error}</Text>}
                             </AvailabilityForm>
                         )}
+                        <CloseButton>See Bookings</CloseButton>
                     </Section>
                     <Section>
                         <Title>Reviews</Title>

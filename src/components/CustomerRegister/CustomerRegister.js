@@ -33,7 +33,7 @@ const CustomerRegister = () => {
     };
 
     return (
-        <Container>
+        <Container style={{ height: '100vh', overflowY: 'auto' }}>
             <FormWrap>
                 <Icon to="/">THE FEED</Icon>
                 <FormContent>
