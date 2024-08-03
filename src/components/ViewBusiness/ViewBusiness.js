@@ -46,27 +46,12 @@ const ViewBusiness = () => {
         }
     }, [selectedDay, business?.availability]);
 
-
-
     if (!business) {
         return <p>Loading...</p>;
     }
 
     // Generated array for days in the month
     const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1);
-
-    // goal: update timeSlots with actual times
-
-    // const timeSlots = [
-    //     "9:00-10:00 AM",
-    //     "10:00-11:00 AM",
-    //     "11:00-12:00 PM",
-    //     "12:00-1:00 PM",
-    //     "1:00-2:00 PM",
-    //     "2:00-3:00 PM",
-    //     "3:00-4:00 PM",
-    //     "4:00-5:00 PM"
-    // ];
 
     // Event handler for day clicks
     const handleDayClick = (day) => {
@@ -107,7 +92,6 @@ const ViewBusiness = () => {
         }
     };
 
-
     // Reset timeslot modal
     const closeTimeSlotsModal = () => {
         setSelectedDay(null);
@@ -115,32 +99,6 @@ const ViewBusiness = () => {
         setSelectedTimeSlot("");
         setShowThankYou(false);
     };
-
-    // // Update availability from business data
-    // const BusinessUpdateAvailability = (businessID) => {
-    //     const [day, setDay] = useState('');
-    //     const [times, setTimes] = useState('');
-    //     const [business, setBusiness] = useState(null);
-    //     const [error, setError] = useState(null);
-    //
-    //     const handleSubmit = async (e) => {
-    //         e.preventDefault();
-    //
-    //         const newAvailability = {
-    //             day: parseInt(day, 10),
-    //             times: [{ times }],
-    //         };
-    //
-    //         try {
-    //             const response = await axios.patch(`http://localhost:5000/businesses/${businessID}/availability`, {
-    //                 availability: newAvailability,
-    //             });
-    //             setBusiness(response.data);
-    //         } catch (err) {
-    //             setError(err.message);
-    //         }
-    //     };
-    // };
 
     return (
         <Container style={{ height: '100vh', overflowY: 'auto' }}>
@@ -150,7 +108,7 @@ const ViewBusiness = () => {
                     <Section>
                         <Title>{business.name}</Title>
                         <Text>Business Rating: ...★</Text>
-                        <Text>Description: ...</Text>
+                        <Text>Description: {business.description}</Text>
                         <Text>Phone: {business.phone}</Text>
                         <Text>Zipcode: {business.zipcode}</Text>
                     </Section>

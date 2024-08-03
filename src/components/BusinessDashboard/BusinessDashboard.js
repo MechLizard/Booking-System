@@ -1,5 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import { Container, FormWrap, Icon, DashboardContent, Section, Title, Text, Calendar, Reviews, ProfitCounter, CalendarHeader, CalendarBody, DayNames, DayBox, DayName, CalendarGrid, ReviewItem, ReviewText, ReviewAuthor, TimeSlotsModal, TimeSlotItem, CloseButton, AvailabilityForm, SubmitButton, BookingsContainer, BookingItem, AddServiceModal, AddServiceForm, AddServiceButton, FormGroup, Label, Input} from './BusinessDashboardElements';
+import {
+    Container,
+    FormWrap,
+    Icon,
+    DashboardContent,
+    Section,
+    Title,
+    Text,
+    Calendar,
+    Reviews,
+    ProfitCounter,
+    CalendarHeader,
+    CalendarBody,
+    DayNames,
+    DayBox,
+    DayName,
+    CalendarGrid,
+    ReviewItem,
+    ReviewText,
+    ReviewAuthor,
+    TimeSlotsModal,
+    TimeSlotItem,
+    CloseButton,
+    AvailabilityForm,
+    SubmitButton,
+    BookingsContainer,
+    BookingItem,
+    AddServiceModal,
+    AddServiceForm,
+    AddServiceButton,
+    FormGroup,
+    Label,
+    Input,
+    DescriptionForm, DescriptionTextarea
+} from './BusinessDashboardElements';
 import axios from 'axios';
 
 const BusinessDashboard = () => {
@@ -23,6 +57,10 @@ const BusinessDashboard = () => {
     const [service, setService] = useState('');
     const [price, setPrice] = useState('');
     const [servicesOffered, setServicesOffered] = useState([]);
+
+    // States for description
+    const [newDescription, setNewDescription] = useState("");
+    const [showDescription, setShowDescription] = useState(false);
 
     // This function fetches the business data based on the locally saved userID
     useEffect(() => {
@@ -153,6 +191,22 @@ const BusinessDashboard = () => {
         }
     };
 
+    // Event handler for description
+    const handleAddDescription = async (e) => {
+        e.preventDefault();
+
+        try {
+            const res = await axios.patch(`http://localhost:8000/businesses/${business._id}/description`, { description: newDescription });
+
+            setBusiness(res.data);
+            setNewDescription("");
+            setShowDescription(false);
+
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+
 
     // Toggle add service modal
     const toggleAddServiceModal = () => setShowAddServiceModal(!showAddServiceModal);
@@ -183,7 +237,17 @@ const BusinessDashboard = () => {
                         <ProfitCounter>Profit: ${business.profit}</ProfitCounter>
                         <Text>Business Rating: {business.rating}</Text>
                         <Text>Description: {business.description}</Text>
-                        <CloseButton>Edit Description</CloseButton>
+                        {DescriptionForm && (
+                            <form onSubmit={handleAddDescription}>
+                                <DescriptionTextarea
+                                    value={newDescription}
+                                    onChange={(e) => setNewDescription(e.target.value)}
+                                    placeholder="Enter description here"
+                                    required
+                                />
+                                <SubmitButton type="submit">Update Description</SubmitButton>
+                            </form>
+                        )}
                     </Section>
 
                     {/* CALENDAR*/}

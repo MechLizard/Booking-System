@@ -212,5 +212,18 @@ router.patch('/:id/services', async (req, res) => {
     }
 });
 
+// * === Description === * //
+router.patch('/:id/description', async (req, res) => {
+    const { id } = req.params;
+    const { description } = req.body;
+
+    try {
+        const business = await Business.findByIdAndUpdate(id, { description: description }, { new: true });
+        res.status(200).json(business);
+    } catch (err) {
+        res.status(500).json({ msg: err.message });
+    }
+});
+
 
 module.exports = router;
