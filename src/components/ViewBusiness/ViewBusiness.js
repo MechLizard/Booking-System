@@ -8,6 +8,7 @@ import { Container, FormWrap, Icon, DashboardContent, Section, Title, Text, Cale
 const ViewBusiness = () => {
     const [selectedDay, setSelectedDay] = useState(null);
     const [selectedService, setSelectedService] = useState("");
+    const [filteredTimeSlots, setFilteredTimeSlots] = useState([]);
     const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
     const [showThankYou, setShowThankYou] = useState(false);
 
@@ -29,6 +30,24 @@ const ViewBusiness = () => {
         getBusiness();
     }, [id]);
 
+    // Filtered time slots based on business availability
+    useEffect(() => {
+        if (selectedDay && business?.availability) {
+            const availabilityForDay = business.availability.find(avail => avail.day === selectedDay);
+
+            console.log('Availability entry for selected day:', availabilityForDay);
+
+            const availableTimes = availabilityForDay?.times || [];
+            setFilteredTimeSlots(availableTimes);
+
+            console.log('Available times:', availableTimes);
+        } else {
+            setFilteredTimeSlots([]);
+        }
+    }, [selectedDay, business?.availability]);
+
+
+
     if (!business) {
         return <p>Loading...</p>;
     }
@@ -38,28 +57,23 @@ const ViewBusiness = () => {
 
     // goal: update timeSlots with actual times
 
-    const timeSlots = [
-        "9:00-10:00 AM",
-        "10:00-11:00 AM",
-        "11:00-12:00 PM",
-        "12:00-1:00 PM",
-        "1:00-2:00 PM",
-        "2:00-3:00 PM",
-        "3:00-4:00 PM",
-        "4:00-5:00 PM"
-    ];
-
-    // goal update services with actual services offered
-    const services = [
-        "Toilet Unclogging",
-        "Sink Repair",
-        "The Joe Special"
-    ];
+    // const timeSlots = [
+    //     "9:00-10:00 AM",
+    //     "10:00-11:00 AM",
+    //     "11:00-12:00 PM",
+    //     "12:00-1:00 PM",
+    //     "1:00-2:00 PM",
+    //     "2:00-3:00 PM",
+    //     "3:00-4:00 PM",
+    //     "4:00-5:00 PM"
+    // ];
 
     // Event handler for day clicks
     const handleDayClick = (day) => {
         setSelectedDay(day);
         setShowThankYou(false);
+        console.log(business.name);
+        console.log(business.availability);
     };
 
     // Event handler for service selection
@@ -102,31 +116,31 @@ const ViewBusiness = () => {
         setShowThankYou(false);
     };
 
-    // Update availability from business data
-    const BusinessUpdateAvailability = (businessID) => {
-        const [day, setDay] = useState('');
-        const [times, setTimes] = useState('');
-        const [business, setBusiness] = useState(null);
-        const [error, setError] = useState(null);
-
-        const handleSubmit = async (e) => {
-            e.preventDefault();
-
-            const newAvailability = {
-                day: parseInt(day, 10),
-                times: [{ times }],
-            };
-
-            try {
-                const response = await axios.patch(`http://localhost:5000/businesses/${businessID}/availability`, {
-                    availability: newAvailability,
-                });
-                setBusiness(response.data);
-            } catch (err) {
-                setError(err.message);
-            }
-        };
-    };
+    // // Update availability from business data
+    // const BusinessUpdateAvailability = (businessID) => {
+    //     const [day, setDay] = useState('');
+    //     const [times, setTimes] = useState('');
+    //     const [business, setBusiness] = useState(null);
+    //     const [error, setError] = useState(null);
+    //
+    //     const handleSubmit = async (e) => {
+    //         e.preventDefault();
+    //
+    //         const newAvailability = {
+    //             day: parseInt(day, 10),
+    //             times: [{ times }],
+    //         };
+    //
+    //         try {
+    //             const response = await axios.patch(`http://localhost:5000/businesses/${businessID}/availability`, {
+    //                 availability: newAvailability,
+    //             });
+    //             setBusiness(response.data);
+    //         } catch (err) {
+    //             setError(err.message);
+    //         }
+    //     };
+    // };
 
     return (
         <Container style={{ height: '100vh', overflowY: 'auto' }}>
@@ -186,13 +200,17 @@ const ViewBusiness = () => {
                     <Title>Time Slots for July {selectedDay}, 2024</Title>
                     <ServicesSelect onChange={handleServiceChange} value={selectedService}>
                         <option value="">Select a Service</option>
-                        {services.map((service, index) => (
-                            <ServiceOption key={index} value={service}>{service}</ServiceOption>
+                        {business.servicesOffered.map((service, index) => (
+                            <ServiceOption key={index} value={service.service}>{service.service}</ServiceOption>
                         ))}
                     </ServicesSelect>
-                    {timeSlots.map((slot, index) => (
-                        <TimeSlotItem key={index} onClick={() => handleTimeSlotClick(slot)}>{slot}</TimeSlotItem>
-                    ))}
+                    {filteredTimeSlots.length > 0 ? (
+                        filteredTimeSlots.map((slot, index) => (
+                            <TimeSlotItem key={index} onClick={() => handleTimeSlotClick(slot)}>{slot}</TimeSlotItem>
+                        ))
+                    ) : (
+                        <Text>No available time slots for this day.</Text>
+                    )}
                     {showThankYou && (
                         <ThankYouNote>
                             Thank you for booking {selectedService} for Wednesday July {selectedDay}, 2024 at {selectedTimeSlot.split('-')[0]}.

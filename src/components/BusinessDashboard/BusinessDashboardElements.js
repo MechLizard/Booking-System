@@ -126,7 +126,8 @@ export const DayBox = styled.div`
     justify-content: center;
     align-items: center;
     height: 40px;
-    background: white;
+    background-color: ${props => props.hasAvailability ? '#2F4F4F' : '#ffffff'};
+    color: ${props => props.hasAvailability ? '#ffffff' : '#000000'};
     border: 1px solid #ccc;
     border-radius: 4px;
     cursor: pointer;
@@ -182,16 +183,18 @@ export const TimeSlotsModal = styled.div`
 
 // Time slot item
 export const TimeSlotItem = styled.div`
-    background: #eaeaea;
+    background-color: ${({ selected }) => (selected ? 'darkslategrey' : '#f0f0f0')}; // Green if selected, light gray otherwise
+    color: #000;
     padding: 10px;
+    margin: 5px;
     border-radius: 4px;
-    margin-bottom: 5px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 
     &:hover {
-        background: lightgrey;
+        background-color: ${({ selected }) => (selected ? '#4F6C6C' : '#e0e0e0')}; // Lighter color on hover
     }
-`
+`;
 
 // Close button
 export const CloseButton = styled.button`

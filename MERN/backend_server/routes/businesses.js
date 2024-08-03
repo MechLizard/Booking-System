@@ -73,15 +73,45 @@ router.post('/login', async (req, res) => {
 // *=== Availability ===* //
 router.patch('/:id/availability', async (req, res) => {
     const { id } = req.params;
-    const { availability } = req.body;
+    const { day, times } = req.body.availability;
+
+    // // Log the incoming request parameters and body for debugging
+    // console.log('Request ID:', id);
+    // console.log('Request Body:', req.body);
+    // console.log('Day:', day);
+    // console.log('Times:', times);
 
     try {
-        const business = await Business.findByIdAndUpdate(id, { $push: { availability: availability } }, { new: true });
+        // Find the business by ID
+        const business = await Business.findById(id);
+        if (!business) {
+            console.log('Business not found');
+            return res.status(404).json({ msg: "Business not found" });
+        }
+
+        // // Log the existing availability for debugging
+        // console.log('Existing Availability:', business.availability);
+
+        // Check for existing availability and update or add new availability
+        const existingAvailability = business.availability.find(avail => avail.day === day);
+        if (existingAvailability) {
+            //console.log('Updating existing availability for day:', day); // For debugging
+            existingAvailability.times = times; // Updates times for existing day
+        } else {
+            //console.log('Adding new availability for day:', day); // For debugging
+            business.availability.push({ day, times }); // Adds new availability
+        }
+
+        // Save the updated business document
+        await business.save();
+        //console.log('Updated Business:', business); // For debugging
         res.status(200).json(business);
     } catch (err) {
+        console.error('Error occurred:', err.message);
         res.status(500).json({ msg: err.message });
     }
 });
+
 
 router.patch('/:id/availability/remove', async (req, res) => {
     const { id } = req.params;
@@ -169,10 +199,11 @@ router.patch('/:id/services', async (req, res) => {
         const existingServiceIndex = business.servicesOffered.findIndex(s => s.service === service);
         if (existingServiceIndex > -1) {
             business.servicesOffered[existingServiceIndex].price = price;
-            console.log('Service Exists'); // For debugging
+            //console.log('Service Exists'); // For debugging
         } else {
             business.servicesOffered.push({ service, price });
-            console.log('Service Added'); // For debugging
+            //console.log(service); // For debugging
+            //console.log('Service Added'); // For debugging
         }
         await business.save();
         res.status(200).json(business);
