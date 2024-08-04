@@ -1,3 +1,5 @@
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 const mongoose = require('mongoose');
 //const user = require('User');
 
@@ -235,6 +237,52 @@ async function run() {
   }
 }
 
+
+const [formData, setFormData] = useState({
+  name: 'Wall-E',
+  phone: '112',
+  zipcode: '554',
+  email: 'Wall-E@gmail.com',
+  password: '123',
+  confirmPassword: '123',
+  permissions: 'business',
+  serviceType: 'Service',
+});
+
+
+useEffect(() => {
+  const fetchBusinessDetails = async () => {
+    e.preventDefault();
+
+    try {
+        const response = await axios.post('http://localhost:8000/businesses/register', formData);
+        console.log(formData); // For debugging
+        console.log(response.data);
+        window.location.href = '/';
+    } catch (error) {
+        console.error('There was an error submitting the form!', error);
+    }
+  };
+
+  fetchBusinessDetails();
+}, []);
+  /*
+  e.preventDefault();
+
+  try {
+      const response = await axios.post('http://localhost:8000/businesses/register', formData);
+      console.log(formData); // For debugging
+      console.log(response.data);
+      window.location.href = '/';
+  } catch (error) {
+      console.error('There was an error submitting the form!', error);
+  }
+};
+*/
+
+
+
+
 async function run() {
   try {
     // // Connect the client to the server
@@ -255,6 +303,8 @@ async function run() {
         continue;
       }
       const insertResult = await collection.insertOne({ name: "Business "+i, age: 25, email: email, Permission: Permissions.BUSINESS, password: "omegalul"});
+      
+      a
       console.log('Inserted document:', insertResult);
     }
      //const insertResult = await collection.insertOne({ name: "Business "+1, age: 25, email:"B"+1+"@gmail.com", Permission: Permissions.BUSINESS, password: "omegalul"});
