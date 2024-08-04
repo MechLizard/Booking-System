@@ -235,4 +235,38 @@ async function run() {
   }
 }
 
+async function run() {
+  try {
+    // // Connect the client to the server
+     await client.connect();
+     console.log("Connected successfully to server");
+    //
+     const db = client.db(dbName);
+    //
+    // // Use the collection "mycollection"
+     const collection = db.collection('businesses');
+     //let account = new Account("Jaimeszq@gmail.com", "lol", Permissions.BUSINESS, 5547854, "", "Jaimes", "Mitchell", "wwsjklsjdflj", "");
+    //
+    // // Insert a single document
+    for(i = 1; i <=100;i++){
+      email = "B"+i+"@gmail.com";
+      if(await db.collection('businesses').findOne({ email }) == true){
+
+        continue;
+      }
+      const insertResult = await collection.insertOne({ name: "Business "+i, age: 25, email: email, Permission: Permissions.BUSINESS, password: "omegalul"});
+      console.log('Inserted document:', insertResult);
+    }
+     //const insertResult = await collection.insertOne({ name: "Business "+1, age: 25, email:"B"+1+"@gmail.com", Permission: Permissions.BUSINESS, password: "omegalul"});
+     //console.log('Inserted document:', insertResult);
+
+  } finally {
+    // Ensures that the client will close when you finish/error
+    await client.close();
+  }
+}
+
+
+
+
 run().catch(console.dir);
