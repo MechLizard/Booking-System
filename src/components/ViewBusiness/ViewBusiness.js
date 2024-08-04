@@ -1,9 +1,13 @@
-// Customer POV of Business Dashboard (currently setup for Customer)
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { Container, FormWrap, Icon, DashboardContent, Section, Title, Text, Calendar, Reviews, ProfitCounter, CalendarHeader, CalendarBody, DayNames, DayBox, DayName, CalendarGrid, ReviewItem, ReviewText, ReviewAuthor, TimeSlotsModal, TimeSlotItem, CloseButton, ServicesSelect, ServiceOption, ThankYouNote } from './ViewBusinessElements';
+import {
+    Container, FormWrap, Icon, DashboardContent, Section, Title, Text, Calendar, Reviews,
+    ProfitCounter, CalendarHeader, CalendarBody, DayNames, DayBox, DayName, CalendarGrid,
+    ReviewItem, ReviewText, ReviewAuthor, TimeSlotsModal, TimeSlotItem, CloseButton,
+    ServicesSelect, ServiceOption, ThankYouNote, ReviewFormContainer, ReviewTextarea,
+    RatingDropdown, DropdownOption, SubmitButton, StarRating, Star
+} from './ViewBusinessElements';
 
 const ViewBusiness = () => {
     const [selectedDay, setSelectedDay] = useState(null);
@@ -11,10 +15,13 @@ const ViewBusiness = () => {
     const [filteredTimeSlots, setFilteredTimeSlots] = useState([]);
     const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
     const [showThankYou, setShowThankYou] = useState(false);
-
-    //For business display
-    const { id } = useParams(); // Get the business ID from the URL
+    const [reviewRating, setReviewRating] = useState(0);
+    const [reviewText, setReviewText] = useState('');
+    const [reviewAvailability, setReviewAvailability] = useState('');
     const [business, setBusiness] = useState(null);
+
+    // Get the business ID from the URL
+    const { id } = useParams();
 
     // get business' data
     useEffect(() => {
@@ -66,7 +73,7 @@ const ViewBusiness = () => {
         setSelectedService(e.target.value);
     };
 
-    //Creates and sends new booking object when customer clicks book
+    // Creates and sends new booking object when customer clicks book
     const handleTimeSlotClick = async (slot) => {
         const userId = localStorage.getItem('userId');
 
@@ -100,14 +107,67 @@ const ViewBusiness = () => {
         setShowThankYou(false);
     };
 
+    // Event handler for review form submission
+    const handleReviewSubmit = async (e) => {
+        e.preventDefault();
+        const userId = localStorage.getItem('userId');
+
+        try {
+            // Fetch customer details using userId from local storage (saved at signin)
+            const customerResponse = await axios.get(`http://localhost:8000/users/${userId}`);
+            const customerName = customerResponse.data.name;
+
+            // Review object
+            const newReview = {
+                customerName: customerName,
+                rating: reviewRating,
+                customerComment: reviewText,
+                businessComment: "", // Initially empty
+                availability: reviewAvailability,
+            };
+
+            // Add review to business' reviews array
+            await axios.patch(`http://localhost:8000/businesses/${id}/reviews`, { review: newReview });
+
+            // Fetch the updated business data including the new review
+            const updatedBusinessResponse = await axios.get(`http://localhost:8000/businesses/${id}`);
+            const updatedBusiness = updatedBusinessResponse.data;
+
+            // Recalculate the average rating
+            const averageRating = calculateAverageRating(updatedBusiness.reviews);
+
+            // Update the business with the new average rating
+            await axios.patch(`http://localhost:8000/businesses/${id}/updateRating`, { averageRating });
+
+            // Update the state with the new business data
+            setBusiness(updatedBusiness);
+            setReviewText("");
+            setReviewRating(0);
+            setReviewAvailability("");
+        } catch (error) {
+            console.error('Error submitting review:', error);
+        }
+    };
+
+    // Function to calculate average rating
+    const calculateAverageRating = (reviews) => {
+        if (reviews.length === 0) return 0;
+
+        const totalRating = reviews.reduce((acc, review) => acc + review.rating, 0);
+        const averageRating = totalRating / reviews.length;
+
+        return Math.round(averageRating);
+    };
+
+
     return (
         <Container style={{ height: '100vh', overflowY: 'auto' }}>
             <Icon to="/customer-dashboard">THE FEED</Icon>
             <FormWrap>
-                <DashboardContent>
+                <DashboardContent style={{ height: '100vh', overflowY: 'auto' }}>
                     <Section>
                         <Title>{business.name}</Title>
-                        <Text>Business Rating: ...★</Text>
+                        <Text>Business Rating: {business.rating}★</Text>
                         <Text>Description: {business.description}</Text>
                         <Text>Phone: {business.phone}</Text>
                         <Text>Zipcode: {business.zipcode}</Text>
@@ -136,19 +196,32 @@ const ViewBusiness = () => {
                     <Section>
                         <Title>Reviews</Title>
                         <Reviews>
-                            <ReviewItem>
-                                <ReviewText>"Woah! My toilet has never looked better!"</ReviewText>
-                                <ReviewAuthor>- Izzy Jones</ReviewAuthor>
-                            </ReviewItem>
-                            <ReviewItem>
-                                <ReviewText>"Highly recommend Joe Toilet for any toilet related needs."</ReviewText>
-                                <ReviewAuthor>- Cody Caraballo</ReviewAuthor>
-                            </ReviewItem>
-                            <ReviewItem>
-                                <ReviewText>"Great for toilets, he even did my sink!"</ReviewText>
-                                <ReviewAuthor>- Adalys M Garcia</ReviewAuthor>
-                            </ReviewItem>
+                            {business.reviews.map((review, index) => (
+                                <ReviewItem key={index}>
+                                    <ReviewText>"{review.customerComment}"</ReviewText>
+                                    <ReviewAuthor>- {review.customerName}</ReviewAuthor>
+                                    <StarRating>
+                                        {Array.from({ length: 5 }, (_, i) => (
+                                            <Star key={i} filled={i < review.rating}>★</Star>
+                                        ))}
+                                    </StarRating>
+                                </ReviewItem>
+                            ))}
                         </Reviews>
+                        <ReviewFormContainer onSubmit={handleReviewSubmit}>
+                            <Title>Leave a Review</Title>
+                            <StarRating>
+                                {Array.from({ length: 5 }, (_, i) => (
+                                    <Star key={i} filled={i < reviewRating} onClick={() => setReviewRating(i + 1)}>★</Star>
+                                ))}
+                            </StarRating>
+                            <ReviewTextarea
+                                value={reviewText}
+                                onChange={(e) => setReviewText(e.target.value)}
+                                placeholder="Write your review here..."
+                            />
+                            <SubmitButton type="submit">Submit Review</SubmitButton>
+                        </ReviewFormContainer>
                     </Section>
                 </DashboardContent>
             </FormWrap>

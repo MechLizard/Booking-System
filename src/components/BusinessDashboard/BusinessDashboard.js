@@ -235,7 +235,7 @@ const BusinessDashboard = () => {
                     <Section>
                         <Title>{business.name}</Title>
                         <ProfitCounter>Profit: ${business.profit}</ProfitCounter>
-                        <Text>Business Rating: {business.rating}</Text>
+                        <Text>Business Rating: {business.rating}★</Text>
                         <Text>Description: {business.description}</Text>
                         {DescriptionForm && (
                             <form onSubmit={handleAddDescription}>

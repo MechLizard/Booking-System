@@ -225,5 +225,18 @@ router.patch('/:id/description', async (req, res) => {
     }
 });
 
+// * === Rating === * //
+router.patch('/:id/updateRating', async (req, res) => {
+    const { id } = req.params;
+    const { averageRating } = req.body;
+
+    try {
+        // Update the average rating of the business
+        const updatedBusiness = await Business.findByIdAndUpdate(id, { rating: averageRating }, { new: true });
+        res.status(200).json(updatedBusiness);
+    } catch (err) {
+        res.status(500).json({ msg: err.message });
+    }
+});
 
 module.exports = router;
