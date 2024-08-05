@@ -1,20 +1,29 @@
-// Customer POV of Business Dashboard (currently setup for Customer)
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { Container, FormWrap, Icon, DashboardContent, Section, Title, Text, Calendar, Reviews, ProfitCounter, CalendarHeader, CalendarBody, DayNames, DayBox, DayName, CalendarGrid, ReviewItem, ReviewText, ReviewAuthor, TimeSlotsModal, TimeSlotItem, CloseButton, ServicesSelect, ServiceOption, ThankYouNote } from './ViewBusinessElements';
+import {
+    Container, FormWrap, Icon, DashboardContent, Section, Title, Text, Calendar, Reviews,
+    ProfitCounter, CalendarHeader, CalendarBody, DayNames, DayBox, DayName, CalendarGrid,
+    ReviewItem, ReviewText, ReviewAuthor, TimeSlotsModal, TimeSlotItem, CloseButton,
+    ServicesSelect, ServiceOption, ThankYouNote, ReviewFormContainer, ReviewTextarea,
+    RatingDropdown, DropdownOption, SubmitButton, StarRating, Star
+} from './ViewBusinessElements';
 
 const ViewBusiness = () => {
     const [selectedDay, setSelectedDay] = useState(null);
     const [selectedService, setSelectedService] = useState("");
+    const [filteredTimeSlots, setFilteredTimeSlots] = useState([]);
     const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
     const [showThankYou, setShowThankYou] = useState(false);
-
-    //For business display
-    const { id } = useParams(); // Get the business ID from the URL
+    const [reviewRating, setReviewRating] = useState(0);
+    const [reviewText, setReviewText] = useState('');
+    const [reviewAvailability, setReviewAvailability] = useState('');
     const [business, setBusiness] = useState(null);
 
+    // Get the business ID from the URL
+    const { id } = useParams();
+
+    // get business' data
     useEffect(() => {
         const getBusiness = async () => {
             try {
@@ -28,6 +37,22 @@ const ViewBusiness = () => {
         getBusiness();
     }, [id]);
 
+    // Filtered time slots based on business availability
+    useEffect(() => {
+        if (selectedDay && business?.availability) {
+            const availabilityForDay = business.availability.find(avail => avail.day === selectedDay);
+
+            console.log('Availability entry for selected day:', availabilityForDay);
+
+            const availableTimes = availabilityForDay?.times || [];
+            setFilteredTimeSlots(availableTimes);
+
+            console.log('Available times:', availableTimes);
+        } else {
+            setFilteredTimeSlots([]);
+        }
+    }, [selectedDay, business?.availability]);
+
     if (!business) {
         return <p>Loading...</p>;
     }
@@ -35,39 +60,46 @@ const ViewBusiness = () => {
     // Generated array for days in the month
     const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1);
 
-    // goal: update timeSlots with actual
-
-    const timeSlots = [
-        "9:00-10:00 AM",
-        "10:00-11:00 AM",
-        "11:00-12:00 PM",
-        "12:00-1:00 PM",
-        "1:00-2:00 PM",
-        "2:00-3:00 PM",
-        "3:00-4:00 PM",
-        "4:00-5:00 PM"
-    ];
-
-    const services = [
-        "Toilet Unclogging",
-        "Sink Repair",
-        "The Joe Special"
-    ];
-
+    // Event handler for day clicks
     const handleDayClick = (day) => {
         setSelectedDay(day);
         setShowThankYou(false);
+        console.log(business.name);
+        console.log(business.availability);
     };
 
+    // Event handler for service selection
     const handleServiceChange = (e) => {
         setSelectedService(e.target.value);
     };
 
-    const handleTimeSlotClick = (slot) => {
-        setSelectedTimeSlot(slot);
-        setShowThankYou(true);
+    // Creates and sends new booking object when customer clicks book
+    const handleTimeSlotClick = async (slot) => {
+        const userId = localStorage.getItem('userId');
+
+        try {
+            // Fetches customer details using userId from local storage (saved at signin)
+            const customerResponse = await axios.get(`http://localhost:8000/users/${userId}`);
+            const customerEmail = customerResponse.data.email;
+
+            // Booking object
+            const newBooking = {
+                customerEmail: customerEmail,
+                service: selectedService,
+                day: selectedDay,
+                Time: slot,
+            };
+
+            // Add booking to business' bookings array
+            const response = await axios.patch(`http://localhost:8000/businesses/${id}/booking`, { booking: newBooking });
+            setBusiness(response.data);
+            setShowThankYou(true);
+        } catch (error) {
+            console.error('Error booking service:', error);
+        }
     };
 
+    // Reset timeslot modal
     const closeTimeSlotsModal = () => {
         setSelectedDay(null);
         setSelectedService("");
@@ -75,40 +107,68 @@ const ViewBusiness = () => {
         setShowThankYou(false);
     };
 
-    const BusinessUpdateAvailability = (businessID) => {
-        const [day, setDay] = useState('');
-        const [times, setTimes] = useState('');
-        const [business, setBusiness] = useState(null);
-        const [error, setError] = useState(null);
+    // Event handler for review form submission
+    const handleReviewSubmit = async (e) => {
+        e.preventDefault();
+        const userId = localStorage.getItem('userId');
 
-        const handleSubmit = async (e) => {
-            e.preventDefault();
+        try {
+            // Fetch customer details using userId from local storage (saved at signin)
+            const customerResponse = await axios.get(`http://localhost:8000/users/${userId}`);
+            const customerName = customerResponse.data.name;
 
-            const newAvailability = {
-                day: parseInt(day, 10),
-                times: [{ times }],
+            // Review object
+            const newReview = {
+                customerName: customerName,
+                rating: reviewRating,
+                customerComment: reviewText,
+                businessComment: "", // Initially empty
+                availability: reviewAvailability,
             };
 
-            try {
-                const response = await axios.patch(`http://localhost:5000/businesses/${businessID}/availability`, {
-                    availability: newAvailability,
-                });
-                setBusiness(response.data);
-            } catch (err) {
-                setError(err.message);
-            }
-        };
+            // Add review to business' reviews array
+            await axios.patch(`http://localhost:8000/businesses/${id}/reviews`, { review: newReview });
+
+            // Fetch the updated business data including the new review
+            const updatedBusinessResponse = await axios.get(`http://localhost:8000/businesses/${id}`);
+            const updatedBusiness = updatedBusinessResponse.data;
+
+            // Recalculate the average rating
+            const averageRating = calculateAverageRating(updatedBusiness.reviews);
+
+            // Update the business with the new average rating
+            await axios.patch(`http://localhost:8000/businesses/${id}/updateRating`, { averageRating });
+
+            // Update the state with the new business data
+            setBusiness(updatedBusiness);
+            setReviewText("");
+            setReviewRating(0);
+            setReviewAvailability("");
+        } catch (error) {
+            console.error('Error submitting review:', error);
+        }
     };
+
+    // Function to calculate average rating
+    const calculateAverageRating = (reviews) => {
+        if (reviews.length === 0) return 0;
+
+        const totalRating = reviews.reduce((acc, review) => acc + review.rating, 0);
+        const averageRating = totalRating / reviews.length;
+
+        return Math.round(averageRating);
+    };
+
 
     return (
         <Container style={{ height: '100vh', overflowY: 'auto' }}>
             <Icon to="/customer-dashboard">THE FEED</Icon>
             <FormWrap>
-                <DashboardContent>
+                <DashboardContent style={{ height: '100vh', overflowY: 'auto' }}>
                     <Section>
                         <Title>{business.name}</Title>
-                        <Text>Business Rating: ...★</Text>
-                        <Text>Description: ...</Text>
+                        <Text>Business Rating: {business.rating}★</Text>
+                        <Text>Description: {business.description}</Text>
                         <Text>Phone: {business.phone}</Text>
                         <Text>Zipcode: {business.zipcode}</Text>
                     </Section>
@@ -136,19 +196,32 @@ const ViewBusiness = () => {
                     <Section>
                         <Title>Reviews</Title>
                         <Reviews>
-                            <ReviewItem>
-                                <ReviewText>"Woah! My toilet has never looked better!"</ReviewText>
-                                <ReviewAuthor>- Izzy Jones</ReviewAuthor>
-                            </ReviewItem>
-                            <ReviewItem>
-                                <ReviewText>"Highly recommend Joe Toilet for any toilet related needs."</ReviewText>
-                                <ReviewAuthor>- Cody Caraballo</ReviewAuthor>
-                            </ReviewItem>
-                            <ReviewItem>
-                                <ReviewText>"Great for toilets, he even did my sink!"</ReviewText>
-                                <ReviewAuthor>- Adalys M Garcia</ReviewAuthor>
-                            </ReviewItem>
+                            {business.reviews.map((review, index) => (
+                                <ReviewItem key={index}>
+                                    <ReviewText>"{review.customerComment}"</ReviewText>
+                                    <ReviewAuthor>- {review.customerName}</ReviewAuthor>
+                                    <StarRating>
+                                        {Array.from({ length: 5 }, (_, i) => (
+                                            <Star key={i} filled={i < review.rating}>★</Star>
+                                        ))}
+                                    </StarRating>
+                                </ReviewItem>
+                            ))}
                         </Reviews>
+                        <ReviewFormContainer onSubmit={handleReviewSubmit}>
+                            <Title>Leave a Review</Title>
+                            <StarRating>
+                                {Array.from({ length: 5 }, (_, i) => (
+                                    <Star key={i} filled={i < reviewRating} onClick={() => setReviewRating(i + 1)}>★</Star>
+                                ))}
+                            </StarRating>
+                            <ReviewTextarea
+                                value={reviewText}
+                                onChange={(e) => setReviewText(e.target.value)}
+                                placeholder="Write your review here..."
+                            />
+                            <SubmitButton type="submit">Submit Review</SubmitButton>
+                        </ReviewFormContainer>
                     </Section>
                 </DashboardContent>
             </FormWrap>
@@ -158,13 +231,17 @@ const ViewBusiness = () => {
                     <Title>Time Slots for July {selectedDay}, 2024</Title>
                     <ServicesSelect onChange={handleServiceChange} value={selectedService}>
                         <option value="">Select a Service</option>
-                        {services.map((service, index) => (
-                            <ServiceOption key={index} value={service}>{service}</ServiceOption>
+                        {business.servicesOffered.map((service, index) => (
+                            <ServiceOption key={index} value={service.service}>{service.service}</ServiceOption>
                         ))}
                     </ServicesSelect>
-                    {timeSlots.map((slot, index) => (
-                        <TimeSlotItem key={index} onClick={() => handleTimeSlotClick(slot)}>{slot}</TimeSlotItem>
-                    ))}
+                    {filteredTimeSlots.length > 0 ? (
+                        filteredTimeSlots.map((slot, index) => (
+                            <TimeSlotItem key={index} onClick={() => handleTimeSlotClick(slot)}>{slot}</TimeSlotItem>
+                        ))
+                    ) : (
+                        <Text>No available time slots for this day.</Text>
+                    )}
                     {showThankYou && (
                         <ThankYouNote>
                             Thank you for booking {selectedService} for Wednesday July {selectedDay}, 2024 at {selectedTimeSlot.split('-')[0]}.

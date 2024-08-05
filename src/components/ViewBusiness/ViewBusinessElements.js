@@ -226,3 +226,50 @@ export const ThankYouNote = styled.div`
     color: #486856;
     text-align: center;
 `;
+
+export const ReviewFormContainer = styled.form`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+`;
+
+export const ReviewTextarea = styled.textarea`
+    width: 100%;
+    height: 100px;
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: none;
+`;
+
+export const SubmitButton = styled.button`
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: darkslategrey;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #0056b3;
+    }
+`;
+
+export const StarRating = styled.div`
+    display: flex;
+    align-items: center;
+`;
+
+export const Star = styled.span`
+    font-size: 24px;
+    color: ${props => (props.filled ? 'darkslategrey' : 'lightgray')};
+    cursor: pointer;
+    margin: 0 2px;
+
+    &:hover {
+        color: darkslategrey;
+    }
+`;
