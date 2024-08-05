@@ -273,3 +273,9 @@ export const Star = styled.span`
         color: darkslategrey;
     }
 `;
+
+export const BusinessComment = styled.div`
+    margin-top: 10px;
+    font-style: italic;
+    color: #555;
+`;

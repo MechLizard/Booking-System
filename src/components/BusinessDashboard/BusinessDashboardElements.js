@@ -11,7 +11,7 @@ export const Container = styled.div`
     top: 0;
     z-index: 0;
     overflow: hidden;
-    background: darkslategrey;
+    background: #1c394d;
 `;
 
 // Icon component at the top of the page
@@ -61,7 +61,7 @@ export const Section = styled.div`
 // Section titles.
 export const Title = styled.h2`
     margin-bottom: 10px;
-    color: darkslategrey;
+    color: #1c394d;
     font-size: 24px;
 `;
 
@@ -126,7 +126,7 @@ export const DayBox = styled.div`
     justify-content: center;
     align-items: center;
     height: 40px;
-    background-color: ${props => props.hasAvailability ? '#2F4F4F' : '#ffffff'};
+    background-color: ${props => props.hasAvailability ? '#1c394d' : '#ffffff'};
     color: ${props => props.hasAvailability ? '#ffffff' : '#000000'};
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -157,7 +157,7 @@ export const ReviewItem = styled.div`
 // Review text
 export const ReviewText = styled.p`
     font-size: 14px;
-    color: darkslategrey;
+    color: #1c394d;
 `;
 
 // Review author
@@ -183,7 +183,7 @@ export const TimeSlotsModal = styled.div`
 
 // Time slot item
 export const TimeSlotItem = styled.div`
-    background-color: ${({ selected }) => (selected ? 'darkslategrey' : '#f0f0f0')}; // Green if selected, light gray otherwise
+    background-color: ${({ selected }) => (selected ? '#1c394d' : '#f0f0f0')}; // Green if selected, light gray otherwise
     color: #000;
     padding: 10px;
     margin: 5px;
@@ -198,7 +198,7 @@ export const TimeSlotItem = styled.div`
 
 // Close button
 export const CloseButton = styled.button`
-    background: darkslategrey;
+    background: #1c394d;
     color: white;
     border: none;
     padding: 5px 10px;
@@ -244,7 +244,7 @@ export const AvailabilityForm = styled.form`
 
 // Submit button
 export const SubmitButton = styled.button`
-    background: darkslategrey;
+    background: #1c394d;
     color: white;
     border: none;
     padding: 10px;
@@ -292,7 +292,7 @@ export const AddServiceModal = styled.div`
 
 // Button to open the "Add Service" modal
 export const AddServiceButton = styled.button`
-    background: darkslategrey; 
+    background: #1c394d; 
     color: #fff; 
     border: none;
     border-radius: 4px;
@@ -359,4 +359,41 @@ margin-bottom: 10px;
 border-radius: 4px;
 border: 1px solid #ccc;
 font-size: 16px;
+`;
+
+export const CommentForm = styled.form`
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+`;
+
+export const CommentTextarea = styled.textarea`
+    width: 100%;
+    height: 50px;
+    margin-bottom: 5px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+`;
+
+export const StarRating = styled.div`
+    display: flex;
+    align-items: center;
+`;
+
+export const Star = styled.span`
+    font-size: 24px;
+    color: ${props => (props.filled ? '#1c394d' : 'lightgray')};
+    cursor: pointer;
+    margin: 0 2px;
+
+    &:hover {
+        color: #1c394d;
+    }
+`;
+
+export const BusinessComment = styled.div`
+    margin-top: 10px;
+    font-style: italic;
+    color: #555;
 `;
