@@ -1,5 +1,7 @@
-const bcrypt = require('bcryptjs');
-const { MongoClient } = require('mongodb');
+//const bcrypt = require('bcryptjs');
+//const { MongoClient } = require('mongodb');
+import bcrypt from 'bcryptjs';
+import { MongoClient } from 'mongodb';
 
 // Connection URI
 const uri = 'mongodb://localhost:27017';
@@ -15,7 +17,7 @@ function getRandomInt(max) {
 async function run() {
   const client = new MongoClient(uri);
 
-  servicesAvailable = ['Service', 'Restaurant', 'Retail'];
+  let servicesAvailable = ['Service', 'Restaurant', 'Retail'];
 
   try {
     // Connect the client to the server
