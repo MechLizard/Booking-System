@@ -24,5 +24,5 @@ const CustomerDashboard = () => {
     }, [])};
 
 useEffect(() => {
-    response.
+//    response.
 }, []);
