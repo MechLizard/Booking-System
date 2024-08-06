@@ -5,7 +5,7 @@ import {
     TimeSlotsModal, TimeSlotItem, CloseButton, AvailabilityForm, SubmitButton, BookingsContainer, BookingItem,
     AddServiceModal, AddServiceForm, AddServiceButton, FormGroup, Label, Input,
     DescriptionForm, DescriptionTextarea, CommentForm, CommentTextarea, StarRating, Star, BusinessComment
-} from './BusinessDashboardElements';
+} from './BusinessDashboardElements.js';
 import axios from 'axios';
 
 const BusinessDashboard = () => {

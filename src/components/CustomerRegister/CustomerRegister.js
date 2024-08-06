@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Container, Form, FormButton, FormContent, FormH1, FormInput, FormLabel, FormWrap, Icon, Text, TextLink } from './CustomerRegisterElements';
+import { Container, Form, FormButton, FormContent, FormH1, FormInput,
+    FormLabel, FormWrap, Icon, Text, TextLink } from './CustomerRegisterElements.js';
 import axios from 'axios';
 
 const CustomerRegister = () => {

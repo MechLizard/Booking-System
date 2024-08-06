@@ -1,13 +1,13 @@
 import React from 'react';
 import './App.css';
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
-import SignIn from './components/Signin';
-import CustomerRegister from './components/CustomerRegister/CustomerRegister';
-import BusinessRegister from './components/BusinessRegister/BusinessRegister';
-import BusinessDashboard from './components/BusinessDashboard/BusinessDashboard';
-import CustomerDashboard from './components/CustomerDashboard/CustomerDashboard';
-import Testing from './components/TESTING/testroute';
-import ViewBusiness from './components/ViewBusiness/ViewBusiness';
+import SignIn from './components/Signin/index.js';
+import CustomerRegister from './components/CustomerRegister/CustomerRegister.js';
+import BusinessRegister from './components/BusinessRegister/BusinessRegister.js';
+import BusinessDashboard from './components/BusinessDashboard/BusinessDashboard.js';
+import CustomerDashboard from './components/CustomerDashboard/CustomerDashboard.js';
+import Testing from './components/TESTING/testroute.js';
+import ViewBusiness from './components/ViewBusiness/ViewBusiness.js';
 
 function App() {
     return (
