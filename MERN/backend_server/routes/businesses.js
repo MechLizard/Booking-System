@@ -129,6 +129,7 @@ router.patch('/:id/availability/remove', async (req, res) => {
 router.patch('/:id/reviews', async (req, res) => {
     const { id } = req.params;
     const { review } = req.body;
+    //console.log(`Received request to post review`);
 
     try {
         const business = await Business.findByIdAndUpdate(id, { $push: { reviews: review } }, { new: true });
@@ -149,6 +150,39 @@ router.patch('/:id/reviews/remove', async (req, res) => {
         res.status(500).json({ msg: err.message });
     }
 });
+
+// *=== Update Business Comment for Review ===* //
+router.patch('/:id/reviews/:reviewId/business-comment', async (req, res) => {
+    const { id, reviewId } = req.params;
+    const { businessComment } = req.body;
+
+    // For debugging
+    //console.log(`Received request to update business comment for Business ID: ${id}, Review ID: ${reviewId}`);
+    //console.log(`New Business Comment: ${businessComment}`);
+
+    try {
+        // Find the business and review
+        const business = await Business.findOne({ _id: id, 'reviews._id': reviewId });
+        if (!business) {
+            //console.log('Business or review not found'); // For debugging
+            return res.status(404).json({ msg: 'Business or review not found' });
+        }
+
+        // Update the review's business comment
+        const review = business.reviews.id(reviewId);
+        review.businessComment = businessComment;
+        await business.save();
+
+        // For debugging
+        //console.log('Business comment updated successfully');
+        res.status(200).json(business);
+    } catch (err) {
+        console.error('Error updating business comment:', err.message); // For debugging
+        res.status(500).json({ msg: 'Internal server error' });
+    }
+});
+
+
 
 // *=== Bookings ===* //
 router.patch('/:id/booking', async (req, res) => {

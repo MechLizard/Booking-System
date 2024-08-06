@@ -6,7 +6,7 @@ import {
     ProfitCounter, CalendarHeader, CalendarBody, DayNames, DayBox, DayName, CalendarGrid,
     ReviewItem, ReviewText, ReviewAuthor, TimeSlotsModal, TimeSlotItem, CloseButton,
     ServicesSelect, ServiceOption, ThankYouNote, ReviewFormContainer, ReviewTextarea,
-    RatingDropdown, DropdownOption, SubmitButton, StarRating, Star
+    SubmitButton, StarRating, Star, BusinessComment
 } from './ViewBusinessElements';
 
 const ViewBusiness = () => {
@@ -64,13 +64,13 @@ const ViewBusiness = () => {
     const handleDayClick = (day) => {
         setSelectedDay(day);
         setShowThankYou(false);
-        console.log(business.name);
-        console.log(business.availability);
+        //console.log(business.name);
+        //console.log(business.availability);
     };
 
     // Event handler for service selection
     const handleServiceChange = (e) => {
-        setSelectedService(e.target.value);
+        setSelectedService(e.target.value); // Keep service as a string
     };
 
     // Creates and sends new booking object when customer clicks book
@@ -78,14 +78,28 @@ const ViewBusiness = () => {
         const userId = localStorage.getItem('userId');
 
         try {
-            // Fetches customer details using userId from local storage (saved at signin)
+            // Fetch customer details using userId from local storage (saved at signin)
             const customerResponse = await axios.get(`http://localhost:8000/users/${userId}`);
             const customerEmail = customerResponse.data.email;
+            const customerPhone = customerResponse.data.phone;
+            const customerName = customerResponse.data.name;
+
+            // Fetch business details
+            const businessName = business.name;
+            const businessPhone = business.phone;
+
+            // Find the selected service and extract the price
+            const selectedServiceObj = business.servicesOffered.find(service => service.service === selectedService);
+            const service = selectedService;
+            const price = selectedServiceObj.price; // Extract the price
 
             // Booking object
             const newBooking = {
                 customerEmail: customerEmail,
-                service: selectedService,
+                customerPhone: customerPhone,
+                customerName: customerName,
+                service: service,
+                price: price,
                 day: selectedDay,
                 Time: slot,
             };
@@ -159,7 +173,6 @@ const ViewBusiness = () => {
         return Math.round(averageRating);
     };
 
-
     return (
         <Container style={{ height: '100vh', overflowY: 'auto' }}>
             <Icon to="/customer-dashboard">THE FEED</Icon>
@@ -176,7 +189,7 @@ const ViewBusiness = () => {
                         <Title>Calendar</Title>
                         <Calendar>
                             <CalendarHeader>
-                                <Text>July 2024</Text>
+                                <Text>August 2024</Text>
                             </CalendarHeader>
                             <CalendarBody>
                                 <DayNames>
@@ -205,6 +218,13 @@ const ViewBusiness = () => {
                                             <Star key={i} filled={i < review.rating}>★</Star>
                                         ))}
                                     </StarRating>
+
+                                    {/* Display business comment */}
+                                    {review.businessComment && (
+                                        <BusinessComment>
+                                            Business Comment: "{review.businessComment}"
+                                        </BusinessComment>
+                                    )}
                                 </ReviewItem>
                             ))}
                         </Reviews>
@@ -228,11 +248,13 @@ const ViewBusiness = () => {
             {selectedDay !== null && (
                 <TimeSlotsModal>
                     <CloseButton onClick={closeTimeSlotsModal}>Close</CloseButton>
-                    <Title>Time Slots for July {selectedDay}, 2024</Title>
+                    <Title>Time Slots for August {selectedDay}, 2024</Title>
                     <ServicesSelect onChange={handleServiceChange} value={selectedService}>
                         <option value="">Select a Service</option>
                         {business.servicesOffered.map((service, index) => (
-                            <ServiceOption key={index} value={service.service}>{service.service}</ServiceOption>
+                            <option key={index} value={service.service}>
+                                {service.service} - ${service.price}
+                            </option>
                         ))}
                     </ServicesSelect>
                     {filteredTimeSlots.length > 0 ? (
@@ -244,7 +266,7 @@ const ViewBusiness = () => {
                     )}
                     {showThankYou && (
                         <ThankYouNote>
-                            Thank you for booking {selectedService} for Wednesday July {selectedDay}, 2024 at {selectedTimeSlot.split('-')[0]}.
+                            Thank you for booking {selectedService} for Wednesday August {selectedDay}, 2024 at {selectedTimeSlot.split('-')[0]}.
                         </ThankYouNote>
                     )}
                 </TimeSlotsModal>
