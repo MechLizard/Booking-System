@@ -13,7 +13,7 @@ docker pull mechlizard/the-feed-web:latest
 
 REM Create a container from the image
 echo "Creating container..."
-docker create -p 3000:3000 --name the-feed mechlizard/the-feed-web:latest
+docker create -p 3000:3000 -p 8000:8000 -p 27017:27017 -e MONGO_URL=mongodb://the-feed-mongodb-1:27017/MERN --name the-feed mechlizard/the-feed-web:latest
 
 REM Copy files from the current directory to the container
 echo "Copying project files..."
@@ -21,8 +21,9 @@ docker cp ./MERN the-feed:/home/circleci/project/MERN
 docker cp ./public the-feed:/home/circleci/project/public
 docker cp ./src the-feed:/home/circleci/project/src
 docker cp ./test the-feed:/home/circleci/project/test
-docker cp ./package.json:/home/circleci/project
-docker cp ./package-lock.json:/home/circleci/project
+docker cp ./package.json the-feed:/home/circleci/project
+docker cp ./package-lock.json the-feed:/home/circleci/project
+docker cp ./.env the-feed:/home/circleci/project
 
 REM start the container
 echo "Starting the container..."

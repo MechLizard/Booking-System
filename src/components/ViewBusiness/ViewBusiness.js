@@ -7,7 +7,7 @@ import {
     ReviewItem, ReviewText, ReviewAuthor, TimeSlotsModal, TimeSlotItem, CloseButton,
     ServicesSelect, ServiceOption, ThankYouNote, ReviewFormContainer, ReviewTextarea,
     SubmitButton, StarRating, Star, BusinessComment
-} from './ViewBusinessElements';
+} from './ViewBusinessElements.js';
 
 const ViewBusiness = () => {
     const [selectedDay, setSelectedDay] = useState(null);

@@ -6,7 +6,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "mocha --exit test/test.js",
     "eject": "react-scripts eject"
   },
   "dependencies": {
@@ -24,6 +24,15 @@
     "react-scripts": "^5.0.1",
     "styled-components": "^6.1.11"
   },
+  "devDependencies": {
+    "chai": "latest",
+    "chai-http": "^5.0.0",
+    "cross-spawn": "^7.0.3",
+    "mocha": "latest",
+    "request": "latest",
+    "supertest": "^7.0.0"
+  },
+  "type": "module",
   "license": "MIT",
   "browserslist": {
     "production": [
