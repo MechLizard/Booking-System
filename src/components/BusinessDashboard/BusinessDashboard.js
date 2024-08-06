@@ -1,38 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Container,
-    FormWrap,
-    Icon,
-    DashboardContent,
-    Section,
-    Title,
-    Text,
-    Calendar,
-    Reviews,
-    ProfitCounter,
-    CalendarHeader,
-    CalendarBody,
-    DayNames,
-    DayBox,
-    DayName,
-    CalendarGrid,
-    ReviewItem,
-    ReviewText,
-    ReviewAuthor,
-    TimeSlotsModal,
-    TimeSlotItem,
-    CloseButton,
-    AvailabilityForm,
-    SubmitButton,
-    BookingsContainer,
-    BookingItem,
-    AddServiceModal,
-    AddServiceForm,
-    AddServiceButton,
-    FormGroup,
-    Label,
-    Input,
-    DescriptionForm, DescriptionTextarea
+    Container, FormWrap, Icon, DashboardContent, Section, Title, Text, Calendar, Reviews, ProfitCounter,
+    CalendarHeader, CalendarBody, DayNames, DayBox, DayName, CalendarGrid, ReviewItem, ReviewText, ReviewAuthor,
+    TimeSlotsModal, TimeSlotItem, CloseButton, AvailabilityForm, SubmitButton, BookingsContainer, BookingItem,
+    AddServiceModal, AddServiceForm, AddServiceButton, FormGroup, Label, Input,
+    DescriptionForm, DescriptionTextarea, CommentForm, CommentTextarea, StarRating, Star, BusinessComment
 } from './BusinessDashboardElements';
 import axios from 'axios';
 
@@ -62,16 +34,31 @@ const BusinessDashboard = () => {
     const [newDescription, setNewDescription] = useState("");
     const [showDescription, setShowDescription] = useState(false);
 
+    // States for commenting
+    const [commentText, setCommentText] = useState('');
+    const [commentingReviewId, setCommentingReviewId] = useState(null);
+
+    // State for profit counter
+    const [totalProfit, setTotalProfit] = useState(0);
+
+    //Function to calculate profit by bookings
+    const calculateTotalProfit = (bookings) => {
+        return bookings.reduce((total, booking) => total + booking.price, 0);
+    };
+
     // This function fetches the business data based on the locally saved userID
     useEffect(() => {
         const fetchBusinessDetails = async () => {
-            const userId = localStorage.getItem('userId'); //This gets the user ID from local storage (saved at signin)
+            const userId = localStorage.getItem('userId');
             if (userId) {
                 try {
                     const response = await axios.get(`http://localhost:8000/businesses/${userId}`);
-                    setBusiness(response.data); //Captures the data from the given user id
+                    setBusiness(response.data);
                     setServicesOffered(response.data.servicesOffered);
                     setSelectedAvailability(response.data.availability || []);
+                    // Calculate and set the total profit
+                    const total = calculateTotalProfit(response.data.booking || []);
+                    setTotalProfit(total);
                 } catch (error) {
                     console.error('Error fetching business details:', error);
                 }
@@ -225,6 +212,48 @@ const BusinessDashboard = () => {
         return <Container>Loading...</Container>;
     }
 
+// Event handler for comment submit
+    const handleCommentSubmit = async (reviewId) => {
+        //console.log('----Handling comment submit----'); // For debugging
+       // console.log(`Review ID: ${reviewId}`); // For debugging
+        //console.log(`Comment Text: ${commentText}`); // For debugging
+
+        try {
+            if (commentText.trim()) {
+                //console.log('Submitting comment'); // For debugging
+                await updateBusinessComment(business._id, reviewId, commentText);
+                setCommentText(''); // Clear the comment text
+                setCommentingReviewId(null); // Reset the commenting review ID
+                //console.log('Comment submitted successfully'); // For debugging
+            } else {
+                const errorMessage = 'Comment cannot be empty';
+                //console.log(errorMessage); // For debugging
+                setError(errorMessage);
+            }
+        } catch (error) {
+            const errorMessage = 'Failed to submit comment';
+            console.error(`${errorMessage}: ${error.message}`); // For debugging
+            setError(errorMessage);
+        }
+    };
+
+// Comment submission function
+    async function updateBusinessComment(businessId, reviewId, businessComment) {
+        try {
+            const url = `http://localhost:8000/businesses/${businessId}/reviews/${reviewId}/business-comment`;
+            //console.log('Updating business comment with URL:', url); // For debugging
+
+            const response = await axios.patch(url, {
+                businessComment
+            });
+
+            //console.log('Updated business:', response.data);
+        } catch (error) {
+            console.error('Error updating business comment:', error.response?.data?.msg || error.message); // For debugging
+        }
+    }
+
+
     return (
         <Container style={{ height: '100vh', overflowY: 'auto' }}>
             <Icon to="/">THE FEED</Icon>
@@ -234,7 +263,9 @@ const BusinessDashboard = () => {
                     {/* BUSINESS DATA */}
                     <Section>
                         <Title>{business.name}</Title>
-                        <ProfitCounter>Profit: ${business.profit}</ProfitCounter>
+                        <ProfitCounter>
+                            Booked Services Profit: ${totalProfit}
+                        </ProfitCounter>
                         <Text>Business Rating: {business.rating}★</Text>
                         <Text>Description: {business.description}</Text>
                         {DescriptionForm && (
@@ -255,7 +286,7 @@ const BusinessDashboard = () => {
                         <Title>Calendar</Title>
                         <Calendar>
                             <CalendarHeader>
-                                <Text>July 2024</Text>
+                                <Text>August 2024</Text>
                             </CalendarHeader>
                             <CalendarBody>
                                 <DayNames>
@@ -284,18 +315,36 @@ const BusinessDashboard = () => {
                     <Section>
                         <Title>Reviews</Title>
                         <Reviews>
-                            <ReviewItem>
-                                <ReviewText>"Woah! My toilet has never looked better!"</ReviewText>
-                                <ReviewAuthor>- Izzy Jones</ReviewAuthor>
-                            </ReviewItem>
-                            <ReviewItem>
-                                <ReviewText>"Highly recommend Joe Toilet for any toilet related needs."</ReviewText>
-                                <ReviewAuthor>- Cody Caraballo</ReviewAuthor>
-                            </ReviewItem>
-                            <ReviewItem>
-                                <ReviewText>"Great for toilets, he even did my sink!"</ReviewText>
-                                <ReviewAuthor>- Adalys M Garcia</ReviewAuthor>
-                            </ReviewItem>
+                            {business.reviews.map((review) => (
+                                <ReviewItem key={review._id}>
+                                    <ReviewText>"{review.customerComment}"</ReviewText>
+                                    <ReviewAuthor>- {review.customerName}</ReviewAuthor>
+                                    <StarRating>
+                                        {Array.from({ length: 5 }, (_, i) => (
+                                            <Star key={i} filled={i < review.rating}>★</Star>
+                                        ))}
+                                    </StarRating>
+
+                                    {/* Business comment */}
+                                    {review.businessComment && (
+                                        <BusinessComment>
+                                            {business.name}: "{review.businessComment}"
+                                        </BusinessComment>
+                                    )}
+
+                                    <CommentForm onSubmit={(e) => { e.preventDefault(); handleCommentSubmit(review._id); }}>
+                                        <CommentTextarea
+                                            value={commentingReviewId === review._id ? commentText : ''}
+                                            onChange={(e) => {
+                                                setCommentText(e.target.value);
+                                                setCommentingReviewId(review._id);
+                                            }}
+                                            placeholder="Add a comment..."
+                                        />
+                                        <SubmitButton type="submit">Add Comment</SubmitButton>
+                                    </CommentForm>
+                                </ReviewItem>
+                            ))}
                         </Reviews>
                     </Section>
                 </DashboardContent>
@@ -303,7 +352,7 @@ const BusinessDashboard = () => {
 
             {showTimeSlotsModal && (
                 <TimeSlotsModal>
-                    <Title>Set Availability for July {selectedDay}, 2024</Title>
+                    <Title>Set Availability for August {selectedDay}, 2024</Title>
                     <AvailabilityForm onSubmit={handleSaveAvailability}>
                         {timeSlots.map((slot, index) => (
                             <TimeSlotItem
@@ -365,10 +414,13 @@ const BookingsModal = ({ bookings, onClose }) => (
         <BookingsContainer>
             {bookings.map((booking, index) => (
                 <BookingItem key={index}>
-                    <Text>Date: {booking.day} July 2024</Text>
+                    <Text>Date: {booking.day} August 2024</Text>
                     <Text>Time: {booking.Time}</Text>
                     <Text>Service: {booking.service}</Text>
-                    <Text>Customer: {booking.customerEmail}</Text>
+                    <Text>Price: ${booking.price}</Text>
+                    <Text>Customer Name: {booking.customerName}</Text>
+                    <Text>Customer Email: {booking.customerEmail}</Text>
+                    <Text>Customer Phone: {booking.customerPhone}</Text>
                 </BookingItem>
             ))}
         </BookingsContainer>

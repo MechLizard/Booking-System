@@ -9,12 +9,12 @@ const dbName = 'MERN'; // Replace with your database name
 
 // Function to run the insertion of 100 business accounts
 function getRandomInt(max) {
-    return Math.floor(Math.random() * max);
-  }
-
+  return Math.floor(Math.random() * max);
+}
 
 async function run() {
-  const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+  const client = new MongoClient(uri);
+
   servicesAvailable = ['Service', 'Restaurant', 'Retail'];
 
   try {
@@ -33,9 +33,12 @@ async function run() {
     for (let i = 1; i <= 100; i++) {
       const email = `B${i}@gmail.com`;
 
+      //console.log(`Creating Business ${i}`);
+
       // Check if the email already exists
       const emailExists = await collection.findOne({ email });
       if (emailExists) {
+        console.log(`Email exists`);
         continue;
       }
 
@@ -43,12 +46,13 @@ async function run() {
         name: `Business ${i}`,
         email: email,
         permission: permissions,
-        password: await bcrypt.hash(password,10),
+        password: await bcrypt.hash(password, 10),
         phone: '224',
         zipcode: '112',
         permissions: 'business',
         serviceType: servicesAvailable[getRandomInt(3)],
       };
+      //console.log(newBusiness);
 
       const insertResult = await collection.insertOne(newBusiness);
       console.log('Inserted document:', insertResult.insertedId);
