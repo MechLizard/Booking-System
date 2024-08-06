@@ -13,7 +13,7 @@ docker pull mechlizard/the-feed-web:latest
 
 # Create a container from the image
 echo "Creating container..."
-docker create -p 3000:3000 --name the-feed mechlizard/the-feed-web:latest
+docker create -p 3000:3000 -p 8000:8000 -p 27017:27017 -e MONGO_URL=mongodb://the-feed-mongodb-1:27017/MERN --name the-feed mechlizard/the-feed-web:latest
 
 # Copy files from the current directory to the container
 echo "Copying project files..."
